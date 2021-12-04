@@ -1,8 +1,8 @@
-package brms.dataProviders;
+package ru.sfedu.brms.dataProviders;
 
-import brms.Result;
-import brms.models.Check;
-import brms.models.rules.Rule;
+import ru.sfedu.brms.models.enums.Result;
+import ru.sfedu.brms.models.Check;
+import ru.sfedu.brms.models.rules.Rule;
 
 import java.util.List;
 import java.util.Optional;

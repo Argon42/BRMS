@@ -1,4 +1,4 @@
-package brms.models.rules;
+package ru.sfedu.brms.models.rules;
 
 import java.util.Objects;
 import java.util.UUID;

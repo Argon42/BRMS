@@ -1,4 +1,4 @@
-package brms.utils;
+package ru.sfedu.brms.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

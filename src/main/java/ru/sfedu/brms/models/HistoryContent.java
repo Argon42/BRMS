@@ -1,6 +1,6 @@
-package brms.models;
+package ru.sfedu.brms.models;
 
-import brms.Result;
+import ru.sfedu.brms.models.enums.Result;
 
 import java.util.UUID;
 

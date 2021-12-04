@@ -1,8 +1,8 @@
-package brms.dataProviders;
+package ru.sfedu.brms.dataProviders;
 
-import brms.Result;
-import brms.models.HistoryContent;
-import brms.models.rules.Rule;
+import ru.sfedu.brms.models.enums.Result;
+import ru.sfedu.brms.models.HistoryContent;
+import ru.sfedu.brms.models.rules.Rule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
