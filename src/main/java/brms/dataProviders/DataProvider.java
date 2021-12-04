@@ -1,6 +1,7 @@
 package brms.dataProviders;
 
 import brms.Result;
+import brms.models.HistoryContent;
 import brms.models.rules.Rule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,7 +14,7 @@ public abstract class DataProvider implements IDataProvider {
     private static final Logger log = LogManager.getLogger(DataProvider.class);
 
     @Override
-    public Result CreateRule(Rule rule) {
+    public Result createRule(Rule rule) {
         log.info("Create new rule");
 
         Optional<Result> ruleError = validateRule(rule);
@@ -23,18 +24,36 @@ public abstract class DataProvider implements IDataProvider {
         }
 
         log.info("Save new rule");
-        //TODO вызов метода сохранения в бд
-        //TODO сохранение истории изменения
+
+        //TODO обработчик ошибок
+        Rule createdRule = saveRule(rule);
+        saveHistory(new HistoryContent(UUID.randomUUID(),
+                        DataProvider.class.getSimpleName(),
+                        System.currentTimeMillis(),
+                        createdRule,
+                        Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        Result.SUCCESS)
+        );
 
         log.info("Rule saved");
         return Result.SUCCESS;
     }
 
+    protected void saveHistory(HistoryContent historyContent){
+        //TODO сделать сохранение в монгу
+    }
+
+    protected abstract Rule update(Rule rule);
+
+    protected abstract void delete(Rule rule);
+
+    protected abstract Rule saveRule(Rule rule);
+
     @Override
-    public Result DeleteRule(UUID id) {
+    public Result eraseRule(UUID id) {
         log.info("Delete rule");
 
-        Optional<Rule> rule = FindRuleByID(id);
+        Optional<Rule> rule = findRuleByID(id);
         if (rule.isEmpty())
         {
             log.warn("Rule not find");
@@ -42,15 +61,23 @@ public abstract class DataProvider implements IDataProvider {
         }
 
         log.info("Delete find rule");
-        //TODO вызов метода удаления в бд
-        //TODO сохранение истории изменения
+
+        //TODO обработка ошибок
+        delete(rule.get());
+        saveHistory(new HistoryContent(UUID.randomUUID(),
+                DataProvider.class.getSimpleName(),
+                System.currentTimeMillis(),
+                rule,
+                Thread.currentThread().getStackTrace()[1].getMethodName(),
+                Result.SUCCESS)
+        );
 
         log.info("Rule deleted");
         return Result.SUCCESS;
     }
 
     @Override
-    public Result EditRule(Rule rule) {
+    public Result editRule(Rule rule) {
         log.info("Edit rule");
 
         Optional<Result> errorRule = validateRule(rule.getId());
@@ -61,18 +88,26 @@ public abstract class DataProvider implements IDataProvider {
         }
 
         log.info("Edit validated rule");
-        //TODO вызов метода изменения в бд
-        //TODO сохранение истории изменения
+
+        //TODO обработчик ошибок
+        Rule editedRule = update(rule);
+        saveHistory(new HistoryContent(UUID.randomUUID(),
+                DataProvider.class.getSimpleName(),
+                System.currentTimeMillis(),
+                editedRule,
+                Thread.currentThread().getStackTrace()[1].getMethodName(),
+                Result.SUCCESS)
+        );
 
         log.info("Rule edited");
         return Result.SUCCESS;
     }
 
     @Override
-    public Result EnableRule(UUID id) {
+    public Result enableRule(UUID id) {
         log.info("Enable rule");
 
-        Optional<Rule> rule = FindRuleByID(id);
+        Optional<Rule> rule = findRuleByID(id);
         if (rule.isEmpty())
         {
             log.warn("Rule not found");
@@ -81,18 +116,26 @@ public abstract class DataProvider implements IDataProvider {
         //TODO изменение состояния правила
 
         log.info("Enable find rule");
-        //TODO вызов метода сохранения в бд
-        //TODO сохранение истории изменения
+
+        //TODO обработчик ошибок
+        Rule editedRule = update(rule.get());
+        saveHistory(new HistoryContent(UUID.randomUUID(),
+                DataProvider.class.getSimpleName(),
+                System.currentTimeMillis(),
+                editedRule,
+                Thread.currentThread().getStackTrace()[1].getMethodName(),
+                Result.SUCCESS)
+        );
 
         log.info("Rule Enabled");
         return Result.SUCCESS;
     }
 
     @Override
-    public Result DisableRule(UUID id) {
+    public Result disableRule(UUID id) {
         log.info("Disable rule");
 
-        Optional<Rule> rule = FindRuleByID(id);
+        Optional<Rule> rule = findRuleByID(id);
         if (rule.isEmpty())
         {
             log.warn("Rule not found");
@@ -101,8 +144,16 @@ public abstract class DataProvider implements IDataProvider {
         //TODO изменение состояния правила
 
         log.info("Disable find rule");
-        //TODO вызов метода сохранения в бд
-        //TODO сохранение истории изменения
+
+        //TODO обработчик ошибок
+        Rule editedRule = update(rule.get());
+        saveHistory(new HistoryContent(UUID.randomUUID(),
+                DataProvider.class.getSimpleName(),
+                System.currentTimeMillis(),
+                editedRule,
+                Thread.currentThread().getStackTrace()[1].getMethodName(),
+                Result.SUCCESS)
+        );
 
         log.info("Rule Disabled");
         return Result.SUCCESS;
@@ -115,7 +166,7 @@ public abstract class DataProvider implements IDataProvider {
         if(rule.getName() == null)
             return Optional.of(Result.ERROR);
 
-        Optional<Rule> findRule = FindRuleByName(rule.getName());
+        Optional<Rule> findRule = findRuleByName(rule.getName());
         return findRule.isEmpty() ? Optional.empty() : Optional.of(Result.ERROR_ALREADY_EXIST);
     }
 

@@ -1,7 +1,7 @@
 package brms.dataProviders;
 
-import brms.models.Check;
 import brms.Result;
+import brms.models.Check;
 import brms.models.rules.Rule;
 
 import java.util.List;
@@ -9,19 +9,19 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface IDataProvider {
-    Result CreateRule(Rule rule);
+    Result createRule(Rule rule);
 
-    Result DeleteRule(UUID id);
+    Result eraseRule(UUID id);
 
-    Result EditRule(Rule rule);
+    Result editRule(Rule rule);
 
-    Result EnableRule(UUID id);
+    Result enableRule(UUID id);
 
-    Result DisableRule(UUID id);
+    Result disableRule(UUID id);
 
-    Optional<Rule> FindRuleByID(UUID id);
+    Optional<Rule> findRuleByID(UUID id);
 
-    Optional<Rule> FindRuleByName(String Name);
+    Optional<Rule> findRuleByName(String Name);
 
-    List<Rule> SearchAvailableRules(Check check);
+    List<Rule> searchAvailableRules(Check check);
 }
