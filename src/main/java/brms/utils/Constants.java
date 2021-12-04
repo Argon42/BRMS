@@ -1,4 +1,4 @@
-package brms;
+package brms.utils;
 
 public class Constants {
 }
