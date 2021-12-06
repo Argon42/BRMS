@@ -11,17 +11,19 @@ public class HistoryContent {
     private long time;
     private Object object;
     private String methodName;
+    private String author;
     private Result result;
 
     public HistoryContent() {
     }
 
-    public HistoryContent(UUID uuid, String className, long time, Object object, String methodName, Result result) {
+    public HistoryContent(UUID uuid, String className, long time, Object object, String methodName, String author, Result result) {
         this.id = uuid;
         this.className = className;
         this.time = time;
         this.object = object;
         this.methodName = methodName;
+        this.author = author;
         this.result = result;
     }
 
@@ -71,5 +73,13 @@ public class HistoryContent {
 
     public void setResult(Result result) {
         this.result = result;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }

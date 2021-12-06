@@ -1,12 +1,29 @@
 package ru.sfedu.brms.models.rules;
 
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
+import ru.sfedu.brms.UUIDConverter;
+import ru.sfedu.brms.models.Check;
+import ru.sfedu.brms.models.Customer;
+import ru.sfedu.brms.models.enums.RuleTypes;
+
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Rule {
-    private UUID id;
-    private String name;
-    private String description;
+public abstract class Rule implements Serializable {
+
+    @CsvBindByName
+    protected boolean enable;
+
+    @CsvCustomBindByName(converter = UUIDConverter.class)
+    protected UUID id;
+
+    @CsvBindByName
+    protected String name;
+
+    @CsvBindByName
+    protected String description;
 
     @Override
     public String toString() {
@@ -53,4 +70,18 @@ public class Rule {
     public void setName(String name) {
         this.name = name;
     }
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
+
+    public abstract RuleTypes getRuleType();
+
+    public abstract boolean checkRule(Check check);
+
+    public abstract boolean checkRule(Check check, Customer customer);
 }
