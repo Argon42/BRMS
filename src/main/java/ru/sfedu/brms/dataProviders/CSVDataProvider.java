@@ -12,7 +12,6 @@ import ru.sfedu.brms.models.Check;
 import ru.sfedu.brms.models.enums.Result;
 import ru.sfedu.brms.models.enums.RuleTypes;
 import ru.sfedu.brms.models.rules.Rule;
-import ru.sfedu.brms.models.rules.RuleByCost;
 import ru.sfedu.brms.utils.ConfigurationUtil;
 import ru.sfedu.brms.utils.Constants;
 
@@ -20,6 +19,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,16 @@ public class CSVDataProvider extends DataProvider {
         RuleTypes.loadAllClassesRules().forEach(ruleClass -> {
             try {
                 String path = createPath(ruleClass);
+                Path fullPath = Paths.get(loadRootPath());
+                if (!Files.exists(fullPath)) {
+                    try {
+                        Files.createDirectories(fullPath);
+                        log.info("Path {} created", fullPath);
+                    } catch (IOException e) {
+                        log.error(e);
+                    }
+                }
+
                 if (new File(path).createNewFile())
                     log.info("File {} created", path);
             } catch (IOException e) {
@@ -135,9 +147,13 @@ public class CSVDataProvider extends DataProvider {
     private <T> String createPath(Class<T> object) throws IOException {
         if (object == null) throw new IllegalArgumentException("Argument is null");
 
-        String rootPath = ConfigurationUtil.getConfigurationEntry(Constants.CSV_PATH);
+        String rootPath = loadRootPath();
         String csvExtension = ConfigurationUtil.getConfigurationEntry(Constants.FILE_EXTENSION_CSV);
 
         return rootPath + object.getSimpleName() + csvExtension;
+    }
+
+    private String loadRootPath() throws IOException {
+        return ConfigurationUtil.getConfigurationEntry(Constants.CSV_PATH);
     }
 }

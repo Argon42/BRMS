@@ -2,13 +2,18 @@ package ru.sfedu.brms.models;
 
 import ru.sfedu.brms.models.enums.Result;
 
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.UUID;
 
-public class HistoryContent {
+public class HistoryContent implements Serializable {
 
     private UUID id;
     private String className;
-    private long time;
+    private String time;
     private Object object;
     private String methodName;
     private String author;
@@ -17,14 +22,18 @@ public class HistoryContent {
     public HistoryContent() {
     }
 
-    public HistoryContent(UUID uuid, String className, long time, Object object, String methodName, String author, Result result) {
+    public HistoryContent(UUID uuid, String className, long timeMilliseconds, Object object, String methodName, String author, Result result) {
         this.id = uuid;
         this.className = className;
-        this.time = time;
+        this.time = formatTime(timeMilliseconds);
         this.object = object;
         this.methodName = methodName;
         this.author = author;
         this.result = result;
+    }
+
+    public String getTime() {
+        return time;
     }
 
     public UUID getId() {
@@ -43,12 +52,15 @@ public class HistoryContent {
         this.className = className;
     }
 
-    public long getTime() {
-        return time;
+    public void setTime(String time) {
+        this.time = time;
     }
 
-    public void setTime(long time) {
-        this.time = time;
+    private String formatTime(long time) {
+        Date date = new Date(time);
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss.SSS");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return formatter.format(date);
     }
 
     public Object getObject() {

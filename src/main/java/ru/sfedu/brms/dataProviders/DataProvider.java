@@ -2,6 +2,7 @@ package ru.sfedu.brms.dataProviders;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.sfedu.brms.HistoryUtil;
 import ru.sfedu.brms.models.HistoryContent;
 import ru.sfedu.brms.models.enums.Result;
 import ru.sfedu.brms.models.rules.Rule;
@@ -124,7 +125,7 @@ public abstract class DataProvider implements IDataProvider {
     protected abstract void delete(Rule rule);
 
     protected void saveHistory(HistoryContent historyContent) {
-        //TODO сделать сохранение в монгу
+        HistoryUtil.saveToLog(historyContent);
     }
 
     protected abstract Rule save(Rule rule);
