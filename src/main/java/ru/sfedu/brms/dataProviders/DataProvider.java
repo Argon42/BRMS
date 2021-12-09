@@ -15,6 +15,8 @@ public abstract class DataProvider implements IDataProvider {
 
     private static final Logger log = LogManager.getLogger(DataProvider.class);
 
+    public abstract void initDataSource();
+
     @Override
     public Result createRule(Rule rule) {
         log.info("Create new rule: {}", rule);
@@ -117,8 +119,6 @@ public abstract class DataProvider implements IDataProvider {
         log.info("Rule Disabled: {}", rule);
         return Result.SUCCESS;
     }
-
-    public abstract void initDataSource();
 
     protected abstract Rule update(Rule rule);
 

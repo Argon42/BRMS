@@ -79,15 +79,6 @@ public class CSVDataProvider extends DataProvider {
     }
 
     @Override
-    public List<Rule> loadAllRules() {
-        return RuleTypes.loadAllClassesRules()
-                .stream()
-                .map(this::csvToBean)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public Optional<Rule> findRuleByID(UUID id) {
         return loadAllRules()
                 .stream()
@@ -109,6 +100,15 @@ public class CSVDataProvider extends DataProvider {
                 .stream()
                 .filter(Rule::isEnable)
                 .filter(rule -> rule.checkRule(check))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Rule> loadAllRules() {
+        return RuleTypes.loadAllClassesRules()
+                .stream()
+                .map(this::csvToBean)
+                .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 

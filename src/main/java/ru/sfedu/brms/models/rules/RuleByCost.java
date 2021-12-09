@@ -17,6 +17,21 @@ public class RuleByCost extends Rule{
         this.discount = discount;
     }
 
+    @Override
+    public boolean checkRule(Check check) {
+        return check.getCost() >= minimalCost;
+    }
+
+    @Override
+    public boolean checkRule(Check check, Customer customer) {
+        return checkRule(check);
+    }
+
+    @Override
+    public RuleTypes getRuleType() {
+        return RuleTypes.RULE_BY_COST;
+    }
+
     public float getMinimalCost() {
         return minimalCost;
     }
@@ -31,20 +46,5 @@ public class RuleByCost extends Rule{
 
     public void setDiscount(float discount) {
         this.discount = discount;
-    }
-
-    @Override
-    public RuleTypes getRuleType() {
-        return RuleTypes.RULE_BY_COST;
-    }
-
-    @Override
-    public boolean checkRule(Check check) {
-        return check.getCost() >= minimalCost;
-    }
-
-    @Override
-    public boolean checkRule(Check check, Customer customer) {
-        return checkRule(check);
     }
 }

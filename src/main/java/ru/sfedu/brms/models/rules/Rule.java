@@ -26,12 +26,8 @@ public abstract class Rule implements Serializable {
     protected String description;
 
     @Override
-    public String toString() {
-        return "Rule{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getDescription());
     }
 
     @Override
@@ -43,9 +39,17 @@ public abstract class Rule implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName(), getDescription());
+    public String toString() {
+        return "Rule{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
+
+    public abstract boolean checkRule(Check check);
+
+    public abstract boolean checkRule(Check check, Customer customer);
 
     public UUID getId() {
         return id;
@@ -80,8 +84,4 @@ public abstract class Rule implements Serializable {
     }
 
     public abstract RuleTypes getRuleType();
-
-    public abstract boolean checkRule(Check check);
-
-    public abstract boolean checkRule(Check check, Customer customer);
 }

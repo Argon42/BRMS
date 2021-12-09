@@ -32,8 +32,19 @@ public class HistoryContent implements Serializable {
         this.result = result;
     }
 
+    private String formatTime(long time) {
+        Date date = new Date(time);
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss.SSS");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return formatter.format(date);
+    }
+
     public String getTime() {
         return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public UUID getId() {
@@ -50,17 +61,6 @@ public class HistoryContent implements Serializable {
 
     public void setClassName(String className) {
         this.className = className;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    private String formatTime(long time) {
-        Date date = new Date(time);
-        DateFormat formatter = new SimpleDateFormat("HH:mm:ss.SSS");
-        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return formatter.format(date);
     }
 
     public Object getObject() {
