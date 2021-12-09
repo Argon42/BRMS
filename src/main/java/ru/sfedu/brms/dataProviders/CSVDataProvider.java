@@ -9,6 +9,7 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.sfedu.brms.models.Check;
+import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.enums.Result;
 import ru.sfedu.brms.models.enums.RuleTypes;
 import ru.sfedu.brms.models.rules.Rule;
@@ -53,10 +54,93 @@ public class CSVDataProvider extends DataProvider {
     }
 
     @Override
+    protected Customer update(Customer customer) {
+        if (customer == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+
+        List<Customer> newCollection = (List<Customer>) csvToBean(customer.getClass());
+        Optional<Customer> foundedCustomer = newCollection.stream()
+                .filter(customer1 -> Objects.equals(customer1.getId(), customer.getId())).findFirst();
+        if (foundedCustomer.isEmpty())
+            throw new IllegalArgumentException(String.format(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION, customer.getId()));
+
+        int index = newCollection.indexOf(foundedCustomer.get());
+        newCollection.set(index, customer);
+        beanToCsv(newCollection, customer.getClass());
+        return customer;
+    }
+
+    @Override
+    protected void delete(Customer customer) {
+        if (customer == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+
+        List<Customer> newCollection = (List<Customer>) csvToBean(Customer.class);
+
+        if (!newCollection.remove(customer))
+            throw new IllegalArgumentException(String.format(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION, customer.getId()));
+
+        beanToCsv(newCollection, customer.getClass());
+    }
+
+    @Override
+    protected void delete(Check check) {
+        if (check == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+
+        List<Check> newCollection = (List<Check>) csvToBean(Check.class);
+
+        if (!newCollection.remove(check))
+            throw new IllegalArgumentException(String.format(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION, check.getId()));
+
+        beanToCsv(newCollection, check.getClass());
+    }
+
+    @Override
+    protected Customer save(Customer customer) {
+        if (customer == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+
+        List<Customer> newCollection = (List<Customer>) csvToBean(Customer.class);
+        customer.setId(UUID.randomUUID());
+        newCollection.add(customer);
+        beanToCsv(newCollection, customer.getClass());
+        return customer;
+    }
+
+    @Override
+    protected Check save(Check check) {
+        if (check == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+
+        List<Check> newCollection = (List<Check>) csvToBean(Check.class);
+        check.setId(UUID.randomUUID());
+        newCollection.add(check);
+        beanToCsv(newCollection, check.getClass());
+        return check;
+    }
+
+    @Override
+    protected Check update(Check check) {
+        if (check == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+
+        List<Check> newCollection = (List<Check>) csvToBean(Check.class);
+        Optional<Check> foundRule = newCollection.stream()
+                .filter(check1 -> Objects.equals(check1.getId(), check.getId())).findFirst();
+        if (foundRule.isEmpty())
+            throw new IllegalArgumentException(String.format(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION, check.getId()));
+
+        int index = newCollection.indexOf(foundRule.get());
+        newCollection.set(index, check);
+        beanToCsv(newCollection, check.getClass());
+        return check;
+    }
+
+    @Override
     protected Rule update(Rule rule) {
+        if (rule == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+
         List<Rule> newCollection = (List<Rule>) csvToBean(rule.getRuleType().getRuleClass());
-        Rule foundRule = newCollection.stream().filter( rule1 -> Objects.equals(rule1.getId(), rule.getId())).findFirst().get();
-        int index = newCollection.indexOf(foundRule);
+        Optional<Rule> foundRule = newCollection.stream().filter(rule1 -> Objects.equals(rule1.getId(), rule.getId())).findFirst();
+        if (foundRule.isEmpty())
+            throw new IllegalArgumentException(String.format(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION, rule.getId()));
+
+        int index = newCollection.indexOf(foundRule.get());
         newCollection.set(index, rule);
         beanToCsv(newCollection, rule.getClass());
         return rule;
@@ -64,13 +148,20 @@ public class CSVDataProvider extends DataProvider {
 
     @Override
     protected void delete(Rule rule) {
+        if (rule == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+
         List<Rule> newCollection = (List<Rule>) csvToBean(rule.getRuleType().getRuleClass());
-        newCollection.remove(rule);
+
+        if (!newCollection.remove(rule))
+            throw new IllegalArgumentException(String.format(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION, rule.getId()));
+
         beanToCsv(newCollection, rule.getClass());
     }
 
     @Override
     protected Rule save(Rule rule) {
+        if (rule == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+
         List<Rule> newCollection = (List<Rule>) csvToBean(rule.getRuleType().getRuleClass());
         rule.setId(UUID.randomUUID());
         newCollection.add(rule);
@@ -79,23 +170,8 @@ public class CSVDataProvider extends DataProvider {
     }
 
     @Override
-    public Optional<Rule> findRuleByID(UUID id) {
-        return loadAllRules()
-                .stream()
-                .filter(rule -> Objects.equals(rule.getId(), id))
-                .findFirst();
-    }
-
-    @Override
-    public Optional<Rule> findRuleByName(String name) {
-        return loadAllRules()
-                .stream()
-                .filter(rule -> Objects.equals(rule.getName(), name))
-                .findFirst();
-    }
-
-    @Override
     public List<Rule> searchAvailableRules(Check check) {
+        if (check == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
         return loadAllRules()
                 .stream()
                 .filter(Rule::isEnable)
@@ -110,6 +186,42 @@ public class CSVDataProvider extends DataProvider {
                 .map(this::csvToBean)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Rule> findRuleByID(UUID id) {
+        if (id == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+        return loadAllRules()
+                .stream()
+                .filter(rule -> Objects.equals(rule.getId(), id))
+                .findFirst();
+    }
+
+    @Override
+    public Optional<Rule> findRuleByName(String name) {
+        if (name == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+        return loadAllRules()
+                .stream()
+                .filter(rule -> Objects.equals(rule.getName(), name))
+                .findFirst();
+    }
+
+    @Override
+    public Optional<Check> findCheckByID(UUID id) {
+        if (id == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+        return csvToBean(Check.class)
+                .stream()
+                .filter(check -> Objects.equals(check.getId(), id))
+                .findFirst();
+    }
+
+    @Override
+    public Optional<Customer> findCustomerByID(UUID id) {
+        if (id == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+        return csvToBean(Customer.class)
+                .stream()
+                .filter(customer -> Objects.equals(customer.getId(), id))
+                .findFirst();
     }
 
     private <T> List<T> csvToBean(Class<T> beanType) {
@@ -139,13 +251,13 @@ public class CSVDataProvider extends DataProvider {
             result = Result.SUCCESS;
         } catch (Exception exception) {
             log.error(exception);
-            result = Result.SUCCESS;
+            result = Result.ERROR;
         }
         return result;
     }
 
     private <T> String createPath(Class<T> object) throws IOException {
-        if (object == null) throw new IllegalArgumentException("Argument is null");
+        if (object == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
 
         String rootPath = loadRootPath();
         String csvExtension = ConfigurationUtil.getConfigurationEntry(Constants.FILE_EXTENSION_CSV);

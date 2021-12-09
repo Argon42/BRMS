@@ -3,6 +3,8 @@ package ru.sfedu.brms.dataProviders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.sfedu.brms.HistoryUtil;
+import ru.sfedu.brms.models.Check;
+import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.HistoryContent;
 import ru.sfedu.brms.models.enums.Result;
 import ru.sfedu.brms.models.rules.Rule;
@@ -18,107 +20,246 @@ public abstract class DataProvider implements IDataProvider {
     public abstract void initDataSource();
 
     @Override
-    public Result createRule(Rule rule) {
+    public UUID createRule(Rule rule) {
         log.info("Create new rule: {}", rule);
 
-        Optional<Result> ruleError = validateRule(rule);
-        if (ruleError.isPresent()) {
-            log.error("Rule create {}", ruleError.get());
-            throw new IllegalArgumentException(ruleError.get().toString());
+        if (isIncorrectNewRule(rule)) {
+            log.error("Create rule error");
+            saveHistory(createHistoryContent(rule, Result.ERROR));
+            throw new IllegalArgumentException();
         }
 
-        log.info("Save new rule: {}", rule);
-
-        //TODO обработчик ошибок
-        Rule createdRule = save(rule);
-        saveHistory(createHistoryContent(createdRule, Result.SUCCESS));
-
-        log.info("Rule saved: {}", rule);
-        return Result.SUCCESS;
+        try {
+            var createdRule = save(rule);
+            log.info("Rule created: {}", rule);
+            saveHistory(createHistoryContent(createdRule, Result.SUCCESS));
+            return createdRule.getId();
+        } catch (Exception e) {
+            log.error(e);
+            saveHistory(createHistoryContent(rule, Result.ERROR));
+            throw e;
+        }
     }
 
     @Override
-    public Result eraseRule(UUID id) {
+    public void deleteRule(UUID id) {
         log.info("Delete rule: {}", id);
 
         Optional<Rule> rule = findRuleByID(id);
         if (rule.isEmpty()) {
             log.error("Rule not find: {}", id);
-            throw new IllegalArgumentException(String.format("Record with id:\"%s\" not found", id));
+            saveHistory(createHistoryContent(rule, Result.ERROR));
+            throw new IllegalArgumentException(String.format(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION, id));
         }
 
-        log.info("Delete find: {}", rule);
-
-        //TODO обработка ошибок
-        delete(rule.get());
-        saveHistory(createHistoryContent(rule, Result.SUCCESS));
-
-        log.info("Rule deleted: {}", rule);
-        return Result.SUCCESS;
+        try {
+            delete(rule.get());
+            log.info("Rule deleted: {}", rule);
+            saveHistory(createHistoryContent(rule, Result.SUCCESS));
+        } catch (Exception e) {
+            log.error(e);
+            saveHistory(createHistoryContent(rule, Result.ERROR));
+            throw e;
+        }
     }
 
     @Override
-    public Result editRule(Rule rule) {
+    public Rule editRule(Rule rule) {
         log.info("Edit rule: {}", rule);
 
-        Optional<Result> errorRule = validateRule(rule.getId());
-        if (errorRule.isPresent())
-        {
-            log.error("Rule edit {}", errorRule.get());
-            throw new IllegalArgumentException(errorRule.get().toString());
+        try {
+            Rule editedRule = update(rule);
+            log.info("Rule edited: {}", rule);
+            saveHistory(createHistoryContent(editedRule, Result.SUCCESS));
+            return editedRule;
+        } catch (Exception e) {
+            log.error(e);
+            saveHistory(createHistoryContent(rule, Result.ERROR));
+            throw e;
         }
-
-        log.info("Edit validated rule: {}", rule);
-
-        //TODO обработчик ошибок
-        Rule editedRule = update(rule);
-        saveHistory(createHistoryContent(editedRule, Result.SUCCESS));
-
-        log.info("Rule edited: {}", rule);
-        return Result.SUCCESS;
     }
 
     @Override
-    public Result enableRule(UUID id) {
+    public Rule enableRule(UUID id) {
         log.info("Enable rule: {}", id);
 
         Optional<Rule> rule = findRuleByID(id);
         if (rule.isEmpty()) {
             log.error("Rule not found: {}", id);
-            throw new IllegalArgumentException(String.format("Record with id:\"%s\" not found", id));
+            saveHistory(createHistoryContent(rule, Result.ERROR));
+            throw new IllegalArgumentException(String.format(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION, id));
         }
-        //TODO изменение состояния правила
-
+        rule.get().setEnable(true);
         log.info("Enable find rule: {}", rule);
 
-        //TODO обработчик ошибок
-        Rule editedRule = update(rule.get());
-        saveHistory(createHistoryContent(editedRule, Result.SUCCESS));
-
-        log.info("Rule Enabled: {}", rule);
-        return Result.SUCCESS;
+        try {
+            Rule editedRule = update(rule.get());
+            log.info("Rule Enabled: {}", rule);
+            saveHistory(createHistoryContent(editedRule, Result.SUCCESS));
+            return editedRule;
+        } catch (Exception e) {
+            log.error(e);
+            saveHistory(createHistoryContent(rule, Result.ERROR));
+            throw e;
+        }
     }
 
     @Override
-    public Result disableRule(UUID id) {
+    public Rule disableRule(UUID id) {
         log.info("Disable rule: {}", id);
 
         Optional<Rule> rule = findRuleByID(id);
         if (rule.isEmpty()) {
             log.error("Rule not found: {}", id);
-            throw new IllegalArgumentException(String.format("Record with id:\"%s\" not found", id));
+            saveHistory(createHistoryContent(rule, Result.ERROR));
+            throw new IllegalArgumentException(String.format(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION, id));
         }
-        //TODO изменение состояния правила
-
+        rule.get().setEnable(false);
         log.info("Disable find rule: {}", rule);
 
-        //TODO обработчик ошибок
-        Rule editedRule = update(rule.get());
-        saveHistory(createHistoryContent(editedRule, Result.SUCCESS));
-
-        log.info("Rule Disabled: {}", rule);
-        return Result.SUCCESS;
+        try {
+            Rule editedRule = update(rule.get());
+            log.info("Rule Disabled: {}", editedRule);
+            saveHistory(createHistoryContent(editedRule, Result.SUCCESS));
+            return editedRule;
+        } catch (Exception e) {
+            log.error(e);
+            saveHistory(createHistoryContent(rule, Result.ERROR));
+            throw e;
+        }
     }
+
+    @Override
+    public UUID saveCheck(Check check) {
+        log.info("Create new check: {}", check);
+
+        if (isIncorrectNewCheck(check)) {
+            log.error("Create check error");
+            saveHistory(createHistoryContent(check, Result.ERROR));
+            throw new IllegalArgumentException();
+        }
+
+        try {
+            Check createdCheck = save(check);
+            log.info("Check created: {}", check);
+            saveHistory(createHistoryContent(createdCheck, Result.SUCCESS));
+            return createdCheck.getId();
+        } catch (Exception e) {
+            log.error(e);
+            saveHistory(createHistoryContent(check, Result.ERROR));
+            throw e;
+        }
+    }
+
+    @Override
+    public void deleteCheck(UUID id) {
+        log.info("Delete check: {}", id);
+
+        Optional<Check> check = findCheckByID(id);
+        if (check.isEmpty()) {
+            log.error("Check not find: {}", id);
+            saveHistory(createHistoryContent(check, Result.ERROR));
+            throw new IllegalArgumentException(String.format(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION, id));
+        }
+
+        try {
+            delete(check.get());
+            log.info("Check deleted: {}", check);
+            saveHistory(createHistoryContent(check, Result.SUCCESS));
+        } catch (Exception e) {
+            log.error(e);
+            saveHistory(createHistoryContent(check, Result.ERROR));
+            throw e;
+        }
+    }
+
+    @Override
+    public Check editCheck(Check check) {
+        log.info("Edit check: {}", check);
+
+        try {
+            Check editedCheck = update(check);
+            log.info("Check edited: {}", check);
+            saveHistory(createHistoryContent(editedCheck, Result.SUCCESS));
+            return editedCheck;
+        } catch (Exception e) {
+            log.error(e);
+            saveHistory(createHistoryContent(check, Result.ERROR));
+            throw e;
+        }
+    }
+
+    @Override
+    public UUID saveCustomer(Customer customer) {
+        log.info("Create new customer: {}", customer);
+
+        if (isIncorrectNewCustomer(customer)) {
+            log.error("Create customer error");
+            saveHistory(createHistoryContent(customer, Result.ERROR));
+            throw new IllegalArgumentException();
+        }
+
+        try {
+            Customer createdCustomer = save(customer);
+            log.info("Customer created: {}", customer);
+            saveHistory(createHistoryContent(createdCustomer, Result.SUCCESS));
+            return createdCustomer.getId();
+        } catch (Exception e) {
+            log.error(e);
+            saveHistory(createHistoryContent(customer, Result.ERROR));
+            throw e;
+        }
+    }
+
+    @Override
+    public void deleteCustomer(UUID id) {
+        log.info("Delete customer: {}", id);
+
+        Optional<Customer> customer = findCustomerByID(id);
+        if (customer.isEmpty()) {
+            log.error("Customer not find: {}", id);
+            saveHistory(createHistoryContent(customer, Result.ERROR));
+            throw new IllegalArgumentException(String.format(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION, id));
+        }
+
+        try {
+            delete(customer.get());
+            log.info("Customer deleted: {}", customer);
+            saveHistory(createHistoryContent(customer, Result.SUCCESS));
+        } catch (Exception e) {
+            log.error(e);
+            saveHistory(createHistoryContent(customer, Result.ERROR));
+            throw e;
+        }
+    }
+
+    @Override
+    public Customer editCustomer(Customer customer) {
+        log.info("Edit rule: {}", customer);
+
+        try {
+            Customer editedCustomer = update(customer);
+            log.info("Customer edited: {}", customer);
+            saveHistory(createHistoryContent(editedCustomer, Result.SUCCESS));
+            return editedCustomer;
+        } catch (Exception e) {
+            log.error(e);
+            saveHistory(createHistoryContent(customer, Result.ERROR));
+            throw e;
+        }
+    }
+
+    protected abstract Customer update(Customer customer);
+
+    protected abstract void delete(Customer customer);
+
+    protected abstract void delete(Check check);
+
+    protected abstract Customer save(Customer customer);
+
+    protected abstract Check save(Check check);
+
+    protected abstract Check update(Check check);
 
     protected abstract Rule update(Rule rule);
 
@@ -141,21 +282,37 @@ public abstract class DataProvider implements IDataProvider {
                 result);
     }
 
-    private Optional<Result> validateRule(UUID id) {
-        //TODO проверка существующего правила
-        //TODO переименовать методы в нормальные названия
-        return Optional.empty();
+    private boolean isIncorrectNewCustomer(Customer customer) {
+        if (customer == null)
+            throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+
+        if (customer.getName() == null)
+            throw new IllegalArgumentException(Constants.OBJECT_NAME_IS_NULL);
+
+        return findCustomerByID(customer.getId()).isPresent();
     }
 
-    private Optional<Result> validateRule(Rule rule) {
+    private boolean isIncorrectNewCheck(Check check) {
+        if (check == null)
+            throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+
+        if (check.getCost() < 0)
+            throw new IllegalArgumentException(String.format(Constants.ARGUMENT_WITH_INCORRECT_FIELD, "cost", check.getCost()));
+
+        if (check.getCountOfGoods() <= 0)
+            throw new IllegalArgumentException(String.format(Constants.ARGUMENT_WITH_INCORRECT_FIELD, "countOfGoods", check.getCost()));
+
+        return findCheckByID(check.getId()).isPresent();
+    }
+
+    private boolean isIncorrectNewRule(Rule rule) {
         if (rule == null)
-            return Optional.of(Result.ERROR);
+            throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
 
         if (rule.getName() == null)
-            return Optional.of(Result.ERROR);
+            throw new IllegalArgumentException(Constants.OBJECT_NAME_IS_NULL);
 
-        Optional<Rule> findRule = findRuleByName(rule.getName());
-        return findRule.isEmpty() ? Optional.empty() : Optional.of(Result.ERROR_ALREADY_EXIST);
+        return findRuleByName(rule.getName()).isPresent();
     }
 
 }

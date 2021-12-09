@@ -20,6 +20,6 @@ public class Main {
 
         dataProvider.editRule(rule.get());
 
-        dataProvider.eraseRule(rule.get().getId());
+        dataProvider.deleteRule(rule.get().getId());
     }
 }
