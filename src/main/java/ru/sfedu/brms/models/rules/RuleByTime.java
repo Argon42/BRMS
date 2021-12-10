@@ -1,6 +1,8 @@
 package ru.sfedu.brms.models.rules;
 
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
+import ru.sfedu.brms.InstantConverter;
 import ru.sfedu.brms.models.Check;
 import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.enums.RuleTypes;
@@ -10,9 +12,9 @@ import java.time.Instant;
 import java.util.Objects;
 
 public class RuleByTime extends Rule {
-    @CsvBindByName
+    @CsvCustomBindByName(converter = InstantConverter.class)
     protected Instant start;
-    @CsvBindByName
+    @CsvCustomBindByName(converter = InstantConverter.class)
     protected Instant end;
     @CsvBindByName
     protected float discount;

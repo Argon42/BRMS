@@ -2,16 +2,18 @@ package ru.sfedu.brms.models;
 
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
+import ru.sfedu.brms.InstantConverter;
 import ru.sfedu.brms.UUIDConverter;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Check implements Serializable {
     @CsvCustomBindByName(converter = UUIDConverter.class)
     protected UUID id;
-    @CsvBindByName
+    @CsvCustomBindByName(converter = InstantConverter.class)
     protected Instant time;
     @CsvBindByName
     protected float cost;
@@ -29,6 +31,30 @@ public class Check implements Serializable {
         this.cost = cost;
         this.countOfGoods = countOfGoods;
         this.customerId = customerId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, time, cost, countOfGoods, customerId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Check check = (Check) o;
+        return Float.compare(check.cost, cost) == 0 && countOfGoods == check.countOfGoods && Objects.equals(id, check.id) && Objects.equals(time, check.time) && Objects.equals(customerId, check.customerId);
+    }
+
+    @Override
+    public String toString() {
+        return "Check{" +
+                "id=" + id +
+                ", time=" + time +
+                ", cost=" + cost +
+                ", countOfGoods=" + countOfGoods +
+                ", customerId=" + customerId +
+                '}';
     }
 
     public UUID getId() {

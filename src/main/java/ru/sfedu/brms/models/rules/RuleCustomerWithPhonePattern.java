@@ -1,5 +1,6 @@
 package ru.sfedu.brms.models.rules;
 
+import com.opencsv.bean.CsvBindByName;
 import ru.sfedu.brms.models.Check;
 import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.enums.RuleTypes;
@@ -8,6 +9,7 @@ import ru.sfedu.brms.models.enums.RuleValidateType;
 import java.util.Objects;
 
 public class RuleCustomerWithPhonePattern extends RuleByCustomer {
+    @CsvBindByName
     protected String pattern;
 
     public RuleCustomerWithPhonePattern() {
