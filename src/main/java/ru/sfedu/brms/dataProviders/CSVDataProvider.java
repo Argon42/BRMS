@@ -164,17 +164,7 @@ public class CSVDataProvider extends DataProvider {
     }
 
     @Override
-    public List<Rule> searchAvailableRules(Check check) {
-        if (check == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
-        return loadAllRules()
-                .stream()
-                .filter(Rule::isEnable)
-                .filter(rule -> rule.checkRule(check))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Rule> loadAllRules() {
+    public List<Rule> searchAllRules() {
         return RuleTypes.loadAllClassesRules()
                 .stream()
                 .map(this::csvToBean)
@@ -185,7 +175,7 @@ public class CSVDataProvider extends DataProvider {
     @Override
     public Optional<Rule> findRuleByID(UUID id) {
         if (id == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
-        return loadAllRules()
+        return this.searchAllRules()
                 .stream()
                 .filter(rule -> Objects.equals(rule.getId(), id))
                 .findFirst();
@@ -194,7 +184,7 @@ public class CSVDataProvider extends DataProvider {
     @Override
     public Optional<Rule> findRuleByName(String name) {
         if (name == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
-        return loadAllRules()
+        return this.searchAllRules()
                 .stream()
                 .filter(rule -> Objects.equals(rule.getName(), name))
                 .findFirst();
@@ -212,12 +202,11 @@ public class CSVDataProvider extends DataProvider {
     @Override
     public Optional<Customer> findCustomerByID(UUID id) {
         if (id == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
-        var bean = csvToBean(Customer.class)
+        return csvToBean(Customer.class)
                 .stream()
                 .filter(customer -> Objects.equals(customer.getId(), id))
+                .peek(customer -> customer.setChecks(findAllChecksByCustomer(customer.getId())))
                 .findFirst();
-        bean.ifPresent(customer -> customer.setChecks(findAllChecksByCustomer(customer.getId())));
-        return bean;
     }
 
     private void createFolder(Class<?> ruleClass) {

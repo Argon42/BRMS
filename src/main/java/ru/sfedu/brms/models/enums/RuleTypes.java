@@ -10,7 +10,8 @@ public enum RuleTypes {
     RULE_BY_COST(RuleByCost.class),
     RULE_BY_COUNT_OF_GOODS(RuleByCountOfGoods.class),
     RULE_BY_COUNT_OF_PURCHASES(RuleByCountOfPurchases.class),
-    RULE_BY_TIME(RuleByTime.class);
+    RULE_BY_TIME(RuleByTime.class),
+    RULE_BY_CUSTOMER_WITH_PHONE_PATTERN(RuleCustomerWithPhonePattern.class);
 
     private final Class<? extends Rule> ruleClass;
 

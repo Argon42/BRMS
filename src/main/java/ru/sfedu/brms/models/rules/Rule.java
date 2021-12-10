@@ -5,6 +5,7 @@ import com.opencsv.bean.CsvCustomBindByName;
 import ru.sfedu.brms.UUIDConverter;
 import ru.sfedu.brms.models.Check;
 import ru.sfedu.brms.models.Customer;
+import ru.sfedu.brms.models.enums.RuleValidateType;
 import ru.sfedu.brms.models.enums.RuleTypes;
 
 import java.io.Serializable;
@@ -83,4 +84,6 @@ public abstract class Rule implements Serializable {
     }
 
     public abstract RuleTypes getRuleType();
+
+    public abstract RuleValidateType getValidateType();
 }

@@ -21,9 +21,7 @@ public interface IDataProvider {
 
     Rule disableRule(UUID id);
 
-    List<Rule> searchAvailableRules(Check check);
-
-    List<Rule> loadAllRules();
+    List<Rule> searchAllRules();
 
     Optional<Rule> findRuleByID(UUID id);
 
@@ -44,4 +42,22 @@ public interface IDataProvider {
     Customer editCustomer(Customer customer);
 
     Optional<Customer> findCustomerByID(UUID id);
+
+    List<Rule> searchAvailableRules(Check check);
+
+    List<Rule> searchAvailableRules(float cost, String time, int countOfGoods);
+
+    List<Rule> searchAvailableRules(Check check, Customer customer);
+
+    List<Rule> searchAvailableRules(float cost, String time, int countOfGoods, String userID);
+
+    List<Rule> findRuleForChecks(List<Rule> rulesForSearch);
+
+    List<Rule> findRuleForCustomers(List<Rule> rulesForSearch);
+
+    List<Rule> findRuleForChecksAndCustomers(List<Rule> rulesForSearch);
+
+    List<Rule> findEnabledRules(List<Rule> rulesForSearch);
+
+    String displayStatistic(String searchCriteria);
 }

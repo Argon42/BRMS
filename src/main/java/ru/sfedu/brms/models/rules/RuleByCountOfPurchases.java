@@ -4,6 +4,7 @@ import com.opencsv.bean.CsvBindByName;
 import ru.sfedu.brms.models.Check;
 import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.enums.RuleTypes;
+import ru.sfedu.brms.models.enums.RuleValidateType;
 
 import java.util.Objects;
 
@@ -61,6 +62,11 @@ public class RuleByCountOfPurchases extends RuleByCustomer {
     @Override
     public RuleTypes getRuleType() {
         return RuleTypes.RULE_BY_COUNT_OF_PURCHASES;
+    }
+
+    @Override
+    public RuleValidateType getValidateType() {
+        return RuleValidateType.CUSTOMER;
     }
 
     public int getMinimalCountOfPurchases() {
