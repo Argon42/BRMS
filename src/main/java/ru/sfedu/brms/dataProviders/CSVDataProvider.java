@@ -32,25 +32,17 @@ public class CSVDataProvider extends DataProvider {
 
     @Override
     public void initDataSource() {
-        RuleTypes.loadAllClassesRules().forEach(ruleClass -> {
-            try {
-                String path = createPath(ruleClass);
-                Path fullPath = Paths.get(loadRootPath());
-                if (!Files.exists(fullPath)) {
-                    try {
-                        Files.createDirectories(fullPath);
-                        log.info("Path {} created", fullPath);
-                    } catch (IOException e) {
-                        log.error(e);
-                    }
-                }
+        RuleTypes.loadAllClassesRules().forEach(this::createFolder);
+        createFolder(Customer.class);
+        createFolder(Check.class);
+    }
 
-                if (new File(path).createNewFile())
-                    log.info("File {} created", path);
-            } catch (IOException e) {
-                log.error(e);
-            }
-        });
+    @Override
+    protected List<Check> findAllChecksByCustomer(UUID id) {
+        return csvToBean(Check.class)
+                .stream()
+                .filter(check -> check.getCustomerId().equals(id))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -228,12 +220,24 @@ public class CSVDataProvider extends DataProvider {
         return bean;
     }
 
-    @Override
-    protected List<Check> findAllChecksByCustomer(UUID id) {
-        return csvToBean(Check.class)
-                .stream()
-                .filter(check -> check.getCustomerId().equals(id))
-                .collect(Collectors.toList());
+    private void createFolder(Class<?> ruleClass) {
+        try {
+            String path = createPath(ruleClass);
+            Path fullPath = Paths.get(loadRootPath());
+            if (!Files.exists(fullPath)) {
+                try {
+                    Files.createDirectories(fullPath);
+                    log.info("Path {} created", fullPath);
+                } catch (IOException e) {
+                    log.error(e);
+                }
+            }
+
+            if (new File(path).createNewFile())
+                log.info("File {} created", path);
+        } catch (IOException e) {
+            log.error(e);
+        }
     }
 
     private <T> List<T> csvToBean(Class<T> beanType) {
