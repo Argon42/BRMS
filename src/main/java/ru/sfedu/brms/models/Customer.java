@@ -20,6 +20,17 @@ public class Customer implements Serializable {
     private String email;
     private List<Check> checks;
 
+    public Customer() {
+    }
+
+    public Customer(UUID id, String name, String phoneNumber, String email, List<Check> checks) {
+        this.id = id;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.checks = checks;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getName(), getPhoneNumber(), getEmail());

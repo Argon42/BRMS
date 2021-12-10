@@ -20,6 +20,17 @@ public class Check implements Serializable {
     @CsvCustomBindByName(converter = UUIDConverter.class)
     protected UUID customerId;
 
+    public Check() {
+    }
+
+    public Check(UUID id, Instant time, float cost, int countOfGoods, UUID customerId) {
+        this.id = id;
+        this.time = time;
+        this.cost = cost;
+        this.countOfGoods = countOfGoods;
+        this.customerId = customerId;
+    }
+
     public UUID getId() {
         return id;
     }
