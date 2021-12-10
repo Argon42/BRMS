@@ -10,6 +10,7 @@ import ru.sfedu.brms.models.enums.Result;
 import ru.sfedu.brms.models.rules.Rule;
 import ru.sfedu.brms.utils.Constants;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -248,6 +249,8 @@ public abstract class DataProvider implements IDataProvider {
             throw e;
         }
     }
+
+    protected abstract List<Check> findAllChecksByCustomer(UUID id);
 
     protected abstract Customer update(Customer customer);
 

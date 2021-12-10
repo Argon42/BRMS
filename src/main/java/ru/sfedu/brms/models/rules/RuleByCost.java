@@ -1,20 +1,41 @@
 package ru.sfedu.brms.models.rules;
 
+import com.opencsv.bean.CsvBindByName;
 import ru.sfedu.brms.models.Check;
 import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.enums.RuleTypes;
 
-public class RuleByCost extends Rule{
-    private float minimalCost;
-    private float discount;
+import java.util.Objects;
+
+public class RuleByCost extends Rule {
+
+    @CsvBindByName
+    protected float minimalCost;
+
+    @CsvBindByName
+    protected float discount;
 
     public RuleByCost() {
     }
 
-    public RuleByCost(String name,float minimalCost, float discount) {
-        this.setName(name);
+    public RuleByCost(String name, float minimalCost, float discount) {
+        this.name = name;
         this.minimalCost = minimalCost;
         this.discount = discount;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), minimalCost, discount);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        RuleByCost that = (RuleByCost) o;
+        return Float.compare(that.minimalCost, minimalCost) == 0 && Float.compare(that.discount, discount) == 0;
     }
 
     @Override

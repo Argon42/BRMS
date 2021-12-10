@@ -1,13 +1,24 @@
 package ru.sfedu.brms.models;
 
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
+import ru.sfedu.brms.UUIDConverter;
+
+import java.io.Serializable;
+import java.time.Instant;
 import java.util.UUID;
 
-public class Check {
-    private UUID id;
-    private long Time;
-    private float cost;
-    private int countOfGoods;
-    private UUID customerId;
+public class Check implements Serializable {
+    @CsvCustomBindByName(converter = UUIDConverter.class)
+    protected UUID id;
+    @CsvBindByName
+    protected Instant time;
+    @CsvBindByName
+    protected float cost;
+    @CsvBindByName
+    protected int countOfGoods;
+    @CsvCustomBindByName(converter = UUIDConverter.class)
+    protected UUID customerId;
 
     public UUID getId() {
         return id;
@@ -17,12 +28,12 @@ public class Check {
         this.id = id;
     }
 
-    public long getTime() {
-        return Time;
+    public Instant getTime() {
+        return time;
     }
 
-    public void setTime(long time) {
-        Time = time;
+    public void setTime(Instant time) {
+        this.time = time;
     }
 
     public float getCost() {

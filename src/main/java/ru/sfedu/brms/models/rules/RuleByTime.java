@@ -1,28 +1,44 @@
 package ru.sfedu.brms.models.rules;
 
+import com.opencsv.bean.CsvBindByName;
 import ru.sfedu.brms.models.Check;
 import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.enums.RuleTypes;
 
-import java.time.Duration;
+import java.time.Instant;
 import java.util.Objects;
 
 public class RuleByTime extends Rule {
-    private Duration timeDuration;
-    private float discount;
+    @CsvBindByName
+    protected Instant start;
+    @CsvBindByName
+    protected Instant end;
+
+    @CsvBindByName
+    protected float discount;
+
+    public RuleByTime() {
+    }
+
+    public RuleByTime(String name, Instant start, Instant end, float discount) {
+        this.name = name;
+        this.start = start;
+        this.end = end;
+        this.discount = discount;
+    }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getTimeDuration(), getDiscount());
+        return Objects.hash(super.hashCode(), start, end, discount);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RuleByTime)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         RuleByTime that = (RuleByTime) o;
-        return Float.compare(that.getDiscount(), getDiscount()) == 0 && Objects.equals(getTimeDuration(), that.getTimeDuration());
+        return Float.compare(that.discount, discount) == 0 && Objects.equals(start, that.start) && Objects.equals(end, that.end);
     }
 
     @Override
@@ -32,19 +48,20 @@ public class RuleByTime extends Rule {
                 ", id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", timeDuration=" + timeDuration +
+                ", start=" + start +
+                ", end=" + end +
                 ", discount=" + discount +
                 '}';
     }
 
     @Override
     public boolean checkRule(Check check) {
-        return false;
+        return start.isBefore(check.getTime()) && end.isAfter(check.getTime());
     }
 
     @Override
     public boolean checkRule(Check check, Customer customer) {
-        return false;
+        return checkRule(check);
     }
 
     @Override
@@ -52,12 +69,20 @@ public class RuleByTime extends Rule {
         return RuleTypes.RULE_BY_TIME;
     }
 
-    public Duration getTimeDuration() {
-        return timeDuration;
+    public Instant getStart() {
+        return start;
     }
 
-    public void setTimeDuration(Duration timeDuration) {
-        this.timeDuration = timeDuration;
+    public void setStart(Instant start) {
+        this.start = start;
+    }
+
+    public Instant getEnd() {
+        return end;
+    }
+
+    public void setEnd(Instant end) {
+        this.end = end;
     }
 
     public float getDiscount() {

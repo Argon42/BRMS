@@ -12,7 +12,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 public abstract class Rule implements Serializable {
-
     @CsvBindByName
     protected boolean enable;
 

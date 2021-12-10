@@ -66,6 +66,7 @@ public class CSVDataProvider extends DataProvider {
         int index = newCollection.indexOf(foundedCustomer.get());
         newCollection.set(index, customer);
         beanToCsv(newCollection, customer.getClass());
+        customer.setChecks(findAllChecksByCustomer(customer.getId()));
         return customer;
     }
 
@@ -101,6 +102,7 @@ public class CSVDataProvider extends DataProvider {
         customer.setId(UUID.randomUUID());
         newCollection.add(customer);
         beanToCsv(newCollection, customer.getClass());
+        customer.setChecks(findAllChecksByCustomer(customer.getId()));
         return customer;
     }
 
@@ -218,10 +220,20 @@ public class CSVDataProvider extends DataProvider {
     @Override
     public Optional<Customer> findCustomerByID(UUID id) {
         if (id == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
-        return csvToBean(Customer.class)
+        var bean = csvToBean(Customer.class)
                 .stream()
                 .filter(customer -> Objects.equals(customer.getId(), id))
                 .findFirst();
+        bean.ifPresent(customer -> customer.setChecks(findAllChecksByCustomer(customer.getId())));
+        return bean;
+    }
+
+    @Override
+    protected List<Check> findAllChecksByCustomer(UUID id) {
+        return csvToBean(Check.class)
+                .stream()
+                .filter(check -> check.getCustomerId().equals(id))
+                .collect(Collectors.toList());
     }
 
     private <T> List<T> csvToBean(Class<T> beanType) {

@@ -1,13 +1,24 @@
 package ru.sfedu.brms.models;
 
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
+import ru.sfedu.brms.UUIDConverter;
+
+import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Customer {
+public class Customer implements Serializable {
+    @CsvCustomBindByName(converter = UUIDConverter.class)
     private UUID id;
+    @CsvBindByName
     private String name;
+    @CsvBindByName
     private String phoneNumber;
+    @CsvBindByName
     private String email;
+    private List<Check> checks;
 
     @Override
     public int hashCode() {
@@ -30,6 +41,14 @@ public class Customer {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    public List<Check> getChecks() {
+        return checks;
+    }
+
+    public void setChecks(List<Check> checks) {
+        this.checks = checks;
     }
 
     public UUID getId() {
