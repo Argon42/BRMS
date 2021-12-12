@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>These are properties</comment>
+    <entry key="testField0">testValue0</entry>
+    <entry key="testField1">testValue1</entry>
+    <entry key="testField2">testValue2</entry>
+    <entry key="testField3">testValue3</entry>
+    <entry key="testField4">testValue4</entry>
+    <entry key="testField5">testValue5</entry>
+    <entry key="testList[0]">TestListElement0</entry>
+    <entry key="testList[1]">TestListElement1</entry>
+    <entry key="testList[2]">TestListElement2</entry>
+</properties>

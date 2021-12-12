@@ -1,4 +1,4 @@
-package ru.sfedu.brms.utils;
+package ru.sfedu.labs;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,26 +11,16 @@ import java.util.stream.Collectors;
 
 /**
  * Configuration utility. Allows to get configuration properties from the
- * default configuration file
+ * xml configuration file
  *
  * @author Roman Sidelnikov
  */
-public class ConfigurationUtil {
-    private static final String SYSTEM_PROPERTY_NAME = "PropertyPath";
-    private static final String DEFAULT_CONFIG_PATH = "./src/main/resources/environment.properties";
+public class XmlConfigurationUtil {
+    private static final String SYSTEM_PROPERTY_NAME = "XmlPropertyPath";
+    private static final String DEFAULT_CONFIG_PATH = "./src/main/resources/environment.xml";
     private static final Properties configuration = new Properties();
 
-    /**
-     * Hides default constructor
-     */
-    public ConfigurationUtil() {
-    }
-    
-    private static Properties getConfiguration() throws IOException {
-        if(configuration.isEmpty()){
-            loadConfiguration();
-        }
-        return configuration;
+    public XmlConfigurationUtil() {
     }
 
     /**
@@ -40,13 +30,24 @@ public class ConfigurationUtil {
      * @throws IOException In case of the configuration file read failure
      */
     private static void loadConfiguration() throws IOException {
-        String propertyPath = System.getProperty(SYSTEM_PROPERTY_NAME);
-        File nf = new File(propertyPath != null ? propertyPath : DEFAULT_CONFIG_PATH);
+        String xmlPropertyPath = System.getProperty(SYSTEM_PROPERTY_NAME);
+        File nf = new File(xmlPropertyPath != null ? xmlPropertyPath : DEFAULT_CONFIG_PATH);
         try (InputStream in = new FileInputStream(nf)) {
-            configuration.load(in);
+            configuration.loadFromXML(in);
         } catch (IOException ex) {
             throw new IOException(ex);
         }
+    }
+
+    /**
+     * Gets configuration entry value
+     *
+     * @param key Entry key
+     * @return Entry value by key
+     * @throws IOException In case of the configuration file read failure
+     */
+    public static String getConfigurationEntry(String key) throws IOException {
+        return getConfiguration().getProperty(key);
     }
 
     public static Map<Integer, String> getConfigurationEntriesMap(String mapKey) throws IOException {
@@ -73,15 +74,11 @@ public class ConfigurationUtil {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Gets configuration entry value
-     *
-     * @param key Entry key
-     * @return Entry value by key
-     * @throws IOException In case of the configuration file read failure
-     */
-    public static String getConfigurationEntry(String key) throws IOException {
-        return getConfiguration().getProperty(key);
+    private static Properties getConfiguration() throws IOException {
+        if (configuration.isEmpty()) {
+            loadConfiguration();
+        }
+        return configuration;
     }
 
 }

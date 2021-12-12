@@ -1,0 +1,9 @@
+testField0: testValue0
+testField1: testValue1
+testField2: testValue2
+testField3: testValue3
+testField4: testValue4
+testField5: testValue5
+testList[0]: TestListElement0
+testList[1]: TestListElement1
+testList[2]: TestListElement2
