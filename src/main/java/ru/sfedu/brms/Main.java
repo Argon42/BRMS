@@ -1,7 +1,7 @@
 package ru.sfedu.brms;
 
-import ru.sfedu.brms.dataProviders.CSVDataProvider;
 import ru.sfedu.brms.dataProviders.IDataProvider;
+import ru.sfedu.brms.dataProviders.XMLDataProvider;
 import ru.sfedu.brms.models.rules.Rule;
 import ru.sfedu.brms.models.rules.RuleByCost;
 
@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
-        IDataProvider dataProvider = new CSVDataProvider();
+        IDataProvider dataProvider = new XMLDataProvider();
         dataProvider.initDataSource();
 
         String name="Discount about 1000";

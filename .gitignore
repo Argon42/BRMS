@@ -155,3 +155,4 @@ buildNumber.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij
 *.csv
+src/main/resources/xml/
