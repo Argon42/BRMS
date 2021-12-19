@@ -2,6 +2,7 @@ package ru.sfedu.brms.dataProviders;
 
 import ru.sfedu.brms.models.Check;
 import ru.sfedu.brms.models.Customer;
+import ru.sfedu.brms.models.Retail;
 import ru.sfedu.brms.models.rules.Rule;
 
 import java.util.List;
@@ -43,21 +44,11 @@ public interface IDataProvider {
 
     Optional<Customer> findCustomerByID(UUID id);
 
-    List<Rule> searchAvailableRules(Check check);
+    UUID createRetail(Retail retail);
 
-    List<Rule> searchAvailableRules(float cost, String time, int countOfGoods);
+    void deleteRetail(UUID id);
 
-    List<Rule> searchAvailableRules(Check check, Customer customer);
+    Retail editRetail(Retail retail);
 
-    List<Rule> searchAvailableRules(float cost, String time, int countOfGoods, String userID);
-
-    List<Rule> findRuleForChecks(List<Rule> rulesForSearch);
-
-    List<Rule> findRuleForCustomers(List<Rule> rulesForSearch);
-
-    List<Rule> findRuleForChecksAndCustomers(List<Rule> rulesForSearch);
-
-    List<Rule> findEnabledRules(List<Rule> rulesForSearch);
-
-    String displayStatistic(String searchCriteria);
+    Optional<Retail> findRetailByID(UUID id);
 }

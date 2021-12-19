@@ -1,14 +1,12 @@
 package ru.sfedu.brms.models.rules;
 
 import com.opencsv.bean.CsvBindByName;
-import ru.sfedu.brms.models.Check;
-import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.enums.RuleTypes;
 import ru.sfedu.brms.models.enums.RuleValidateType;
 
 import java.util.Objects;
 
-public class RuleByCost extends Rule {
+public class RuleByPurchaseCount extends Rule {
 
     @CsvBindByName
     protected float minimalCost;
@@ -16,10 +14,10 @@ public class RuleByCost extends Rule {
     @CsvBindByName
     protected float discount;
 
-    public RuleByCost() {
+    public RuleByPurchaseCount() {
     }
 
-    public RuleByCost(String name, float minimalCost, float discount) {
+    public RuleByPurchaseCount(String name, float minimalCost, float discount) {
         this.name = name;
         this.minimalCost = minimalCost;
         this.discount = discount;
@@ -35,28 +33,18 @@ public class RuleByCost extends Rule {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        RuleByCost that = (RuleByCost) o;
+        RuleByPurchaseCount that = (RuleByPurchaseCount) o;
         return Float.compare(that.minimalCost, minimalCost) == 0 && Float.compare(that.discount, discount) == 0;
     }
 
     @Override
-    public boolean checkRule(Check check) {
-        return check.getCost() >= minimalCost;
-    }
-
-    @Override
-    public boolean checkRule(Check check, Customer customer) {
-        return checkRule(check);
-    }
-
-    @Override
     public RuleTypes getRuleType() {
-        return RuleTypes.RULE_BY_COST;
+        return RuleTypes.RULE_BY_PURCHASE_COUNT;
     }
 
     @Override
     public RuleValidateType getValidateType() {
-        return RuleValidateType.CHECK;
+        return RuleValidateType.CUSTOMER;
     }
 
     public float getMinimalCost() {

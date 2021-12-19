@@ -7,11 +7,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum RuleTypes {
-    RULE_BY_COST(RuleByCost.class),
+    RULE_BY_PURCHASE_COUNT(RuleByPurchaseCount.class),
     RULE_BY_COUNT_OF_GOODS(RuleByCountOfGoods.class),
-    RULE_BY_COUNT_OF_PURCHASES(RuleByCountOfPurchases.class),
-    RULE_BY_TIME(RuleByTime.class),
-    RULE_BY_CUSTOMER_WITH_PHONE_PATTERN(RuleCustomerWithPhonePattern.class);
+    RULE_BY_TIME(RuleByTime.class);
 
     private final Class<? extends Rule> ruleClass;
 

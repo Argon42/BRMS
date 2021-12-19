@@ -57,16 +57,6 @@ public class RuleByTime extends Rule {
     }
 
     @Override
-    public boolean checkRule(Check check) {
-        return start.isBefore(check.getTime()) && end.isAfter(check.getTime());
-    }
-
-    @Override
-    public boolean checkRule(Check check, Customer customer) {
-        return checkRule(check);
-    }
-
-    @Override
     public RuleTypes getRuleType() {
         return RuleTypes.RULE_BY_TIME;
     }

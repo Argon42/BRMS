@@ -19,6 +19,7 @@ public class Customer implements Serializable {
     @CsvBindByName
     private String email;
     private List<Check> checks;
+    private UUID retailId;
 
     public Customer() {
     }
@@ -41,7 +42,7 @@ public class Customer implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Customer)) return false;
         Customer customer = (Customer) o;
-        return Objects.equals(getId(), customer.getId()) && Objects.equals(getName(), customer.getName()) && Objects.equals(getPhoneNumber(), customer.getPhoneNumber()) && Objects.equals(getEmail(), customer.getEmail());
+        return Objects.equals(getId(), customer.getId()) && Objects.equals(getName(), customer.getName()) && Objects.equals(getPhoneNumber(), customer.getPhoneNumber()) && Objects.equals(getEmail(), customer.getEmail())&& Objects.equals(getRetailId(), customer.getRetailId());
     }
 
     @Override
@@ -51,7 +52,16 @@ public class Customer implements Serializable {
                 ", name='" + name + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
+                ", retailId='" + retailId + '\'' +
                 '}';
+    }
+
+    public UUID getRetailId() {
+        return retailId;
+    }
+
+    public void setRetailId(UUID retailId) {
+        this.retailId = retailId;
     }
 
     public List<Check> getChecks() {

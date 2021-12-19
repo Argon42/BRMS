@@ -50,16 +50,6 @@ public class RuleByCountOfGoods extends Rule {
     }
 
     @Override
-    public boolean checkRule(Check check) {
-        return check.getCountOfGoods() >= minimalCountOfGoods;
-    }
-
-    @Override
-    public boolean checkRule(Check check, Customer customer) {
-        return checkRule(check);
-    }
-
-    @Override
     public RuleTypes getRuleType() {
         return RuleTypes.RULE_BY_COUNT_OF_GOODS;
     }

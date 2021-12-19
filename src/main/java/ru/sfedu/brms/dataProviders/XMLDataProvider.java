@@ -2,6 +2,7 @@ package ru.sfedu.brms.dataProviders;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.sfedu.brms.InstantPersistenceDelegate;
 import ru.sfedu.brms.UUIDPersistenceDelegate;
 import ru.sfedu.brms.models.enums.Result;
 import ru.sfedu.brms.utils.ConfigurationUtil;
@@ -10,6 +11,7 @@ import ru.sfedu.brms.utils.Constants;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -68,6 +70,7 @@ public class XMLDataProvider extends FileDataProvider {
             try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream)) {
                 try (XMLEncoder encoder = new XMLEncoder(bufferedOutputStream)) {
                     encoder.setPersistenceDelegate(UUID.class, new UUIDPersistenceDelegate());
+                    encoder.setPersistenceDelegate(Instant.class, new InstantPersistenceDelegate());
 
                     encoder.writeObject(beans);
 

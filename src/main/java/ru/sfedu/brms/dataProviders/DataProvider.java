@@ -6,24 +6,80 @@ import ru.sfedu.brms.HistoryUtil;
 import ru.sfedu.brms.models.Check;
 import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.HistoryContent;
-import ru.sfedu.brms.models.enums.DisplayVariants;
+import ru.sfedu.brms.models.Retail;
 import ru.sfedu.brms.models.enums.Result;
-import ru.sfedu.brms.models.enums.RuleValidateType;
 import ru.sfedu.brms.models.rules.Rule;
 import ru.sfedu.brms.utils.Constants;
 
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public abstract class DataProvider implements IDataProvider {
 
     private static final Logger log = LogManager.getLogger(DataProvider.class);
 
     public abstract void initDataSource();
+
+    @Override
+    public UUID createRetail(Retail retail) {
+        log.info("Create new retail: {}", retail);
+
+        if (isIncorrectNewRetail(retail)) {
+            log.error("Create retail error");
+            saveHistory(createHistoryContent(retail, Result.ERROR));
+            throw new IllegalArgumentException();
+        }
+
+        try {
+            Retail createdRetail = save(retail);
+            log.info("Retail created: {}", retail);
+            saveHistory(createHistoryContent(createdRetail, Result.SUCCESS));
+            return createdRetail.getId();
+        } catch (Exception e) {
+            log.error(e);
+            saveHistory(createHistoryContent(retail, Result.ERROR));
+            throw e;
+        }
+    }
+
+    @Override
+    public void deleteRetail(UUID id) {
+        log.info("Delete retail: {}", id);
+
+        Optional<Retail> retail = findRetailByID(id);
+        if (retail.isEmpty()) {
+            log.error("Retail not find: {}", id);
+            saveHistory(createHistoryContent(retail, Result.ERROR));
+            throw new IllegalArgumentException(String.format(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION, id));
+        }
+
+        try {
+            delete(retail.get());
+            log.info("Retail deleted: {}", retail);
+            saveHistory(createHistoryContent(retail, Result.SUCCESS));
+        } catch (Exception e) {
+            log.error(e);
+            saveHistory(createHistoryContent(retail, Result.ERROR));
+            throw e;
+        }
+    }
+
+    @Override
+    public Retail editRetail(Retail retail) {
+        log.info("Edit retail: {}", retail);
+
+        try {
+            Retail editedRetail = update(retail);
+            log.info("Retail edited: {}", retail);
+            saveHistory(createHistoryContent(editedRetail, Result.SUCCESS));
+            return editedRetail;
+        } catch (Exception e) {
+            log.error(e);
+            saveHistory(createHistoryContent(retail, Result.ERROR));
+            throw e;
+        }
+    }
 
     @Override
     public UUID createRule(Rule rule) {
@@ -36,7 +92,7 @@ public abstract class DataProvider implements IDataProvider {
         }
 
         try {
-            var createdRule = save(rule);
+            Rule createdRule = save(rule);
             log.info("Rule created: {}", rule);
             saveHistory(createHistoryContent(createdRule, Result.SUCCESS));
             return createdRule.getId();
@@ -255,91 +311,11 @@ public abstract class DataProvider implements IDataProvider {
         }
     }
 
-    @Override
-    public List<Rule> searchAvailableRules(Check check) {
-        if (check == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
-        return this.searchAllRules()
-                .stream()
-                .filter(Rule::isEnable)
-                .filter(rule -> rule.checkRule(check))
-                .collect(Collectors.toList());
-    }
+    protected abstract Retail save(Retail retail);
 
-    @Override
-    public List<Rule> searchAvailableRules(float cost, String time, int countOfGoods) {
-        return searchAvailableRules(new Check(null, Instant.parse(time), cost, countOfGoods, null));
-    }
+    protected abstract void delete(Retail retail);
 
-    @Override
-    public List<Rule> searchAvailableRules(Check check, Customer customer) {
-        if (check == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
-        return this.searchAllRules()
-                .stream()
-                .filter(Rule::isEnable)
-                .filter(rule -> rule.checkRule(check, customer))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Rule> searchAvailableRules(float cost, String time, int countOfGoods, String userID) {
-        return searchAvailableRules(
-                new Check(null, Instant.parse(time), cost, countOfGoods, UUID.fromString(userID)),
-                new Customer(UUID.fromString(userID), null, null, null, null));
-    }
-
-    @Override
-    public List<Rule> findRuleForChecks(List<Rule> rulesForSearch) {
-        if (rulesForSearch == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
-        return rulesForSearch
-                .stream()
-                .filter(rule -> rule.getValidateType().equals(RuleValidateType.CHECK))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Rule> findRuleForCustomers(List<Rule> rulesForSearch) {
-        if (rulesForSearch == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
-        return rulesForSearch
-                .stream()
-                .filter(rule -> rule.getValidateType().equals(RuleValidateType.CUSTOMER))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Rule> findRuleForChecksAndCustomers(List<Rule> rulesForSearch) {
-        if (rulesForSearch == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
-        return rulesForSearch
-                .stream()
-                .filter(rule -> rule.getValidateType().equals(RuleValidateType.CHECK_AND_CUSTOMER))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Rule> findEnabledRules(List<Rule> rulesForSearch) {
-        if (rulesForSearch == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
-        return rulesForSearch
-                .stream()
-                .filter(Rule::isEnable)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public String displayStatistic(String searchCriteria) {
-        List<Rule> rules = new ArrayList<>();
-        List<Rule> allRules = searchAllRules();
-        if (searchCriteria.contains(DisplayVariants.RULE_FOR_CHECKS.toString()))
-            rules.addAll(findRuleForChecks(allRules));
-
-        if (searchCriteria.contains(DisplayVariants.ENABLED_RULES.toString()))
-            rules.addAll(findEnabledRules(allRules));
-
-        if (searchCriteria.contains(DisplayVariants.RULE_FOR_CUSTOMERS.toString()))
-            rules.addAll(findRuleForCustomers(allRules));
-
-        StringBuilder builder = new StringBuilder();
-        rules.forEach(rule -> builder.append(rules).append('\n'));
-        return builder.toString();
-    }
+    protected abstract Retail update(Retail retail);
 
     protected abstract List<Check> findAllChecksByCustomer(UUID id);
 
@@ -348,6 +324,8 @@ public abstract class DataProvider implements IDataProvider {
     protected abstract void delete(Customer customer);
 
     protected abstract void delete(Check check);
+
+    protected abstract List<Customer> findAllCustomersByRetail(UUID id);
 
     protected abstract Customer save(Customer customer);
 
@@ -374,6 +352,16 @@ public abstract class DataProvider implements IDataProvider {
                 stackTrace.getMethodName(),
                 Constants.DEFAULT_AUTHOR,
                 result);
+    }
+
+    private boolean isIncorrectNewRetail(Retail retail) {
+        if (retail == null)
+            throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+
+        if (retail.getName() == null)
+            throw new IllegalArgumentException(Constants.OBJECT_NAME_IS_NULL);
+
+        return findRetailByID(retail.getId()).isPresent();
     }
 
     private boolean isIncorrectNewCustomer(Customer customer) {

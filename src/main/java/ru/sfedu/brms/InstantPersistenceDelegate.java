@@ -5,20 +5,17 @@ import java.beans.Expression;
 import java.beans.PersistenceDelegate;
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.UUID;
 
-public class UUIDPersistenceDelegate extends PersistenceDelegate {
-    private final HashSet<UUID> hashesWritten = new HashSet<>();
+public class InstantPersistenceDelegate extends PersistenceDelegate {
+    private final HashSet<Instant> hashesWritten = new HashSet<>();
 
     public Expression instantiate(Object oldInstance, Encoder out) {
-        UUID id = (UUID) oldInstance;
-        hashesWritten.add(id);
-        return new Expression(oldInstance, UUID.class, "fromString", new Object[]{id.toString()});
+        Instant time = (Instant) oldInstance;
+        hashesWritten.add(time);
+        return new Expression(oldInstance, Instant.class, "parse", new Object[]{time.toString()});
     }
 
     protected boolean mutatesTo(Object oldInstance, Object newInstance) {
         return hashesWritten.contains(oldInstance);
     }
 }
-
-
