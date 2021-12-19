@@ -24,12 +24,11 @@ public class Customer implements Serializable {
     public Customer() {
     }
 
-    public Customer(UUID id, String name, String phoneNumber, String email, List<Check> checks) {
+    public Customer(UUID id, String name, String phoneNumber, String email) {
         this.id = id;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.checks = checks;
     }
 
     @Override

@@ -22,7 +22,7 @@ public abstract class DataProvider implements IDataProvider {
     public abstract void initDataSource();
 
     @Override
-    public UUID createRetail(Retail retail) {
+    public UUID saveRetail(Retail retail) {
         log.info("Create new retail: {}", retail);
 
         if (isIncorrectNewRetail(retail)) {
@@ -82,7 +82,7 @@ public abstract class DataProvider implements IDataProvider {
     }
 
     @Override
-    public UUID createRule(Rule rule) {
+    public UUID saveRule(Rule rule) {
         log.info("Create new rule: {}", rule);
 
         if (isIncorrectNewRule(rule)) {

@@ -31,7 +31,6 @@ public abstract class FileDataProvider extends DataProvider {
 
     @Override
     public Optional<Retail> findRetailByID(UUID id) {
-        if (id == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
         return fileToBean(Retail.class)
                 .stream()
                 .filter(retail -> Objects.equals(retail.getId(), id))
@@ -49,7 +48,6 @@ public abstract class FileDataProvider extends DataProvider {
 
     @Override
     public Optional<Rule> findRuleByID(UUID id) {
-        if (id == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
         return this.searchAllRules()
                 .stream()
                 .filter(rule -> Objects.equals(rule.getId(), id))
@@ -58,7 +56,6 @@ public abstract class FileDataProvider extends DataProvider {
 
     @Override
     public Optional<Rule> findRuleByName(String name) {
-        if (name == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
         return this.searchAllRules()
                 .stream()
                 .filter(rule -> Objects.equals(rule.getName(), name))
@@ -67,7 +64,6 @@ public abstract class FileDataProvider extends DataProvider {
 
     @Override
     public Optional<Check> findCheckByID(UUID id) {
-        if (id == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
         return fileToBean(Check.class)
                 .stream()
                 .filter(check -> Objects.equals(check.getId(), id))
@@ -76,7 +72,6 @@ public abstract class FileDataProvider extends DataProvider {
 
     @Override
     public Optional<Customer> findCustomerByID(UUID id) {
-        if (id == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
         return fileToBean(Customer.class)
                 .stream()
                 .filter(customer -> Objects.equals(customer.getId(), id))

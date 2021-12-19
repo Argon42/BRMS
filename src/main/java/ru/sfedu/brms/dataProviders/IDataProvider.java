@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface IDataProvider {
     void initDataSource();
 
-    UUID createRule(Rule rule);
+    UUID saveRule(Rule rule);
 
     void deleteRule(UUID id);
 
@@ -44,7 +44,7 @@ public interface IDataProvider {
 
     Optional<Customer> findCustomerByID(UUID id);
 
-    UUID createRetail(Retail retail);
+    UUID saveRetail(Retail retail);
 
     void deleteRetail(UUID id);
 

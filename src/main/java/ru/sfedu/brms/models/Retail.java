@@ -29,6 +29,16 @@ public class Retail implements Serializable {
     }
 
     @Override
+    public String toString() {
+        return "Retail{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", customers=" + customers +
+                ", checks=" + checks +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(getId(), getName(), getCustomers(), getChecks());
     }
