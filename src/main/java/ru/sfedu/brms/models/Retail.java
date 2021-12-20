@@ -14,8 +14,10 @@ public class Retail implements Serializable {
     protected UUID id;
     @CsvBindByName
     protected String name;
+    @CsvBindByName
+    protected int countOfStores;
     private List<Customer> customers;
-    private List<Check> checks;
+    private List<StoreCheck> checks;
 
     public Retail() {
     }
@@ -25,7 +27,7 @@ public class Retail implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Retail)) return false;
         Retail retail = (Retail) o;
-        return Objects.equals(getId(), retail.getId()) && Objects.equals(getName(), retail.getName()) && Objects.equals(getCustomers(), retail.getCustomers()) && Objects.equals(getChecks(), retail.getChecks());
+        return Objects.equals(getId(), retail.getId()) && Objects.equals(getCountOfStores(), retail.getCountOfStores()) && Objects.equals(getName(), retail.getName()) && Objects.equals(getCustomers(), retail.getCustomers()) && Objects.equals(getChecks(), retail.getChecks());
     }
 
     @Override
@@ -33,6 +35,7 @@ public class Retail implements Serializable {
         return "Retail{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", countOfStores=" + countOfStores +
                 ", customers=" + customers +
                 ", checks=" + checks +
                 '}';
@@ -40,14 +43,22 @@ public class Retail implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getCustomers(), getChecks());
+        return Objects.hash(getId(), getName(), getCountOfStores(), getCustomers(), getChecks());
     }
 
-    public List<Check> getChecks() {
+    public int getCountOfStores() {
+        return countOfStores;
+    }
+
+    public void setCountOfStores(int countOfStores) {
+        this.countOfStores = countOfStores;
+    }
+
+    public List<StoreCheck> getChecks() {
         return checks;
     }
 
-    public void setChecks(List<Check> checks) {
+    public void setChecks(List<StoreCheck> checks) {
         this.checks = checks;
     }
 

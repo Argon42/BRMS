@@ -1,6 +1,6 @@
 package ru.sfedu.brms.dataProviders;
 
-import ru.sfedu.brms.models.Check;
+import ru.sfedu.brms.models.StoreCheck;
 import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.Retail;
 import ru.sfedu.brms.models.rules.Rule;
@@ -26,15 +26,13 @@ public interface IDataProvider {
 
     Optional<Rule> findRuleByID(UUID id);
 
-    Optional<Rule> findRuleByName(String Name);
-
-    UUID saveCheck(Check check);
+    UUID saveCheck(StoreCheck check);
 
     void deleteCheck(UUID id);
 
-    Check editCheck(Check check);
+    StoreCheck editCheck(StoreCheck check);
 
-    Optional<Check> findCheckByID(UUID id);
+    Optional<StoreCheck> findCheckByID(UUID id);
 
     UUID saveCustomer(Customer customer);
 

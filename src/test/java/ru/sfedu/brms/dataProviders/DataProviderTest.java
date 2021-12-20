@@ -3,7 +3,7 @@ package ru.sfedu.brms.dataProviders;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.sfedu.brms.models.Check;
+import ru.sfedu.brms.models.StoreCheck;
 import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.Retail;
 
@@ -36,7 +36,7 @@ public abstract class DataProviderTest {
 
     @Test
     public void workWithCheck() {
-        var check = new Check();
+        var check = new StoreCheck();
         check.setCost(1000);
         check.setCountOfGoods(3);
         check.setTime(Instant.now());

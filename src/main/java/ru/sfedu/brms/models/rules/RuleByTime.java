@@ -3,8 +3,6 @@ package ru.sfedu.brms.models.rules;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
 import ru.sfedu.brms.InstantConverter;
-import ru.sfedu.brms.models.Check;
-import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.enums.RuleTypes;
 import ru.sfedu.brms.models.enums.RuleValidateType;
 
@@ -13,9 +11,9 @@ import java.util.Objects;
 
 public class RuleByTime extends Rule {
     @CsvCustomBindByName(converter = InstantConverter.class)
-    protected Instant start;
+    protected Instant startTime;
     @CsvCustomBindByName(converter = InstantConverter.class)
-    protected Instant end;
+    protected Instant endTime;
     @CsvBindByName
     protected float discount;
 
@@ -24,14 +22,14 @@ public class RuleByTime extends Rule {
 
     public RuleByTime(String name, Instant start, Instant end, float discount) {
         this.name = name;
-        this.start = start;
-        this.end = end;
+        this.startTime = start;
+        this.endTime = end;
         this.discount = discount;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), start, end, discount);
+        return Objects.hash(super.hashCode(), startTime, endTime, discount);
     }
 
     @Override
@@ -40,7 +38,7 @@ public class RuleByTime extends Rule {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         RuleByTime that = (RuleByTime) o;
-        return Float.compare(that.discount, discount) == 0 && Objects.equals(start, that.start) && Objects.equals(end, that.end);
+        return Float.compare(that.discount, discount) == 0 && Objects.equals(startTime, that.startTime) && Objects.equals(endTime, that.endTime);
     }
 
     @Override
@@ -50,8 +48,8 @@ public class RuleByTime extends Rule {
                 ", id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", start=" + start +
-                ", end=" + end +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
                 ", discount=" + discount +
                 '}';
     }
@@ -66,20 +64,20 @@ public class RuleByTime extends Rule {
         return RuleValidateType.CHECK;
     }
 
-    public Instant getStart() {
-        return start;
+    public Instant getStartTime() {
+        return startTime;
     }
 
-    public void setStart(Instant start) {
-        this.start = start;
+    public void setStartTime(Instant startTime) {
+        this.startTime = startTime;
     }
 
-    public Instant getEnd() {
-        return end;
+    public Instant getEndTime() {
+        return endTime;
     }
 
-    public void setEnd(Instant end) {
-        this.end = end;
+    public void setEndTime(Instant endTime) {
+        this.endTime = endTime;
     }
 
     public float getDiscount() {

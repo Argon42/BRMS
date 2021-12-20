@@ -2,7 +2,7 @@ package ru.sfedu.brms.dataProviders;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.sfedu.brms.models.Check;
+import ru.sfedu.brms.models.StoreCheck;
 import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.Retail;
 import ru.sfedu.brms.models.enums.Result;
@@ -26,7 +26,7 @@ public abstract class FileDataProvider extends DataProvider {
     public void initDataSource() {
         RuleTypes.loadAllClassesRules().forEach(this::createFolder);
         createFolder(Customer.class);
-        createFolder(Check.class);
+        createFolder(StoreCheck.class);
     }
 
     @Override
@@ -55,16 +55,8 @@ public abstract class FileDataProvider extends DataProvider {
     }
 
     @Override
-    public Optional<Rule> findRuleByName(String name) {
-        return this.searchAllRules()
-                .stream()
-                .filter(rule -> Objects.equals(rule.getName(), name))
-                .findFirst();
-    }
-
-    @Override
-    public Optional<Check> findCheckByID(UUID id) {
-        return fileToBean(Check.class)
+    public Optional<StoreCheck> findCheckByID(UUID id) {
+        return fileToBean(StoreCheck.class)
                 .stream()
                 .filter(check -> Objects.equals(check.getId(), id))
                 .findFirst();
@@ -80,8 +72,8 @@ public abstract class FileDataProvider extends DataProvider {
     }
 
     @Override
-    protected List<Check> findAllChecksByCustomer(UUID id) {
-        return fileToBean(Check.class)
+    protected List<StoreCheck> findAllChecksByCustomer(UUID id) {
+        return fileToBean(StoreCheck.class)
                 .stream()
                 .filter(check -> check.getCustomerId().equals(id))
                 .collect(Collectors.toList());
@@ -191,10 +183,10 @@ public abstract class FileDataProvider extends DataProvider {
     }
 
     @Override
-    protected Check save(Check check) {
+    protected StoreCheck save(StoreCheck check) {
         if (check == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
 
-        List<Check> newCollection = (List<Check>) fileToBean(Check.class);
+        List<StoreCheck> newCollection = (List<StoreCheck>) fileToBean(StoreCheck.class);
         check.setId(UUID.randomUUID());
         newCollection.add(check);
         beanToFile(newCollection, check.getClass());
@@ -202,11 +194,11 @@ public abstract class FileDataProvider extends DataProvider {
     }
 
     @Override
-    protected Check update(Check check) {
+    protected StoreCheck update(StoreCheck check) {
         if (check == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
 
-        List<Check> newCollection = (List<Check>) fileToBean(Check.class);
-        Optional<Check> foundedCheck = newCollection
+        List<StoreCheck> newCollection = (List<StoreCheck>) fileToBean(StoreCheck.class);
+        Optional<StoreCheck> foundedCheck = newCollection
                 .stream()
                 .filter(check1 -> Objects.equals(check1.getId(), check.getId()))
                 .findFirst();
@@ -220,10 +212,10 @@ public abstract class FileDataProvider extends DataProvider {
     }
 
     @Override
-    protected void delete(Check check) {
+    protected void delete(StoreCheck check) {
         if (check == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
 
-        List<Check> newCollection = (List<Check>) fileToBean(Check.class);
+        List<StoreCheck> newCollection = (List<StoreCheck>) fileToBean(StoreCheck.class);
 
         if (!newCollection.remove(check))
             throw new IllegalArgumentException(String.format(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION, check.getId()));

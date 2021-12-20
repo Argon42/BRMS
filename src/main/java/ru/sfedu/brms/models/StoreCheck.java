@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Check implements Serializable {
+public class StoreCheck implements Serializable {
     @CsvCustomBindByName(converter = UUIDConverter.class)
     protected UUID id;
     @CsvCustomBindByName(converter = InstantConverter.class)
@@ -22,10 +22,10 @@ public class Check implements Serializable {
     @CsvCustomBindByName(converter = UUIDConverter.class)
     protected UUID customerId;
 
-    public Check() {
+    public StoreCheck() {
     }
 
-    public Check(UUID id, Instant time, float cost, int countOfGoods, UUID customerId) {
+    public StoreCheck(UUID id, Instant time, float cost, int countOfGoods, UUID customerId) {
         this.id = id;
         this.time = time;
         this.cost = cost;
@@ -42,13 +42,13 @@ public class Check implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Check check = (Check) o;
+        StoreCheck check = (StoreCheck) o;
         return Float.compare(check.cost, cost) == 0 && countOfGoods == check.countOfGoods && Objects.equals(id, check.id) && Objects.equals(time, check.time) && Objects.equals(customerId, check.customerId);
     }
 
     @Override
     public String toString() {
-        return "Check{" +
+        return "StoreCheck{" +
                 "id=" + id +
                 ", time=" + time +
                 ", cost=" + cost +

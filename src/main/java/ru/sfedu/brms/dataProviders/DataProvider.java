@@ -3,7 +3,7 @@ package ru.sfedu.brms.dataProviders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.sfedu.brms.HistoryUtil;
-import ru.sfedu.brms.models.Check;
+import ru.sfedu.brms.models.StoreCheck;
 import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.HistoryContent;
 import ru.sfedu.brms.models.Retail;
@@ -192,7 +192,7 @@ public abstract class DataProvider implements IDataProvider {
     }
 
     @Override
-    public UUID saveCheck(Check check) {
+    public UUID saveCheck(StoreCheck check) {
         log.info("Create new check: {}", check);
 
         if (isIncorrectNewCheck(check)) {
@@ -202,7 +202,7 @@ public abstract class DataProvider implements IDataProvider {
         }
 
         try {
-            Check createdCheck = save(check);
+            StoreCheck createdCheck = save(check);
             log.info("Check created: {}", check);
             saveHistory(createHistoryContent(createdCheck, Result.SUCCESS));
             return createdCheck.getId();
@@ -217,7 +217,7 @@ public abstract class DataProvider implements IDataProvider {
     public void deleteCheck(UUID id) {
         log.info("Delete check: {}", id);
 
-        Optional<Check> check = findCheckByID(id);
+        Optional<StoreCheck> check = findCheckByID(id);
         if (check.isEmpty()) {
             log.error("Check not find: {}", id);
             saveHistory(createHistoryContent(check, Result.ERROR));
@@ -236,11 +236,11 @@ public abstract class DataProvider implements IDataProvider {
     }
 
     @Override
-    public Check editCheck(Check check) {
+    public StoreCheck editCheck(StoreCheck check) {
         log.info("Edit check: {}", check);
 
         try {
-            Check editedCheck = update(check);
+            StoreCheck editedCheck = update(check);
             log.info("Check edited: {}", check);
             saveHistory(createHistoryContent(editedCheck, Result.SUCCESS));
             return editedCheck;
@@ -317,21 +317,21 @@ public abstract class DataProvider implements IDataProvider {
 
     protected abstract Retail update(Retail retail);
 
-    protected abstract List<Check> findAllChecksByCustomer(UUID id);
+    protected abstract List<StoreCheck> findAllChecksByCustomer(UUID id);
 
     protected abstract Customer update(Customer customer);
 
     protected abstract void delete(Customer customer);
 
-    protected abstract void delete(Check check);
+    protected abstract void delete(StoreCheck check);
 
     protected abstract List<Customer> findAllCustomersByRetail(UUID id);
 
     protected abstract Customer save(Customer customer);
 
-    protected abstract Check save(Check check);
+    protected abstract StoreCheck save(StoreCheck check);
 
-    protected abstract Check update(Check check);
+    protected abstract StoreCheck update(StoreCheck check);
 
     protected abstract Rule update(Rule rule);
 
@@ -361,6 +361,9 @@ public abstract class DataProvider implements IDataProvider {
         if (retail.getName() == null)
             throw new IllegalArgumentException(Constants.OBJECT_NAME_IS_NULL);
 
+        if(retail.getId() == null)
+            return false;
+
         return findRetailByID(retail.getId()).isPresent();
     }
 
@@ -371,10 +374,13 @@ public abstract class DataProvider implements IDataProvider {
         if (customer.getName() == null)
             throw new IllegalArgumentException(Constants.OBJECT_NAME_IS_NULL);
 
+        if(customer.getId() == null)
+            return false;
+
         return findCustomerByID(customer.getId()).isPresent();
     }
 
-    private boolean isIncorrectNewCheck(Check check) {
+    private boolean isIncorrectNewCheck(StoreCheck check) {
         if (check == null)
             throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
 
@@ -383,6 +389,9 @@ public abstract class DataProvider implements IDataProvider {
 
         if (check.getCountOfGoods() <= 0)
             throw new IllegalArgumentException(String.format(Constants.ARGUMENT_WITH_INCORRECT_FIELD, "countOfGoods", check.getCost()));
+
+       if(check.getId() == null)
+           return false;
 
         return findCheckByID(check.getId()).isPresent();
     }
@@ -394,7 +403,10 @@ public abstract class DataProvider implements IDataProvider {
         if (rule.getName() == null)
             throw new IllegalArgumentException(Constants.OBJECT_NAME_IS_NULL);
 
-        return findRuleByName(rule.getName()).isPresent();
+        if(rule.getId() == null)
+            return false;
+
+        return findRuleByID(rule.getId()).isPresent();
     }
 
 }

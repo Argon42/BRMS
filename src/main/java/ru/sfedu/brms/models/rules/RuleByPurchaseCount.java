@@ -7,12 +7,10 @@ import ru.sfedu.brms.models.enums.RuleValidateType;
 import java.util.Objects;
 
 public class RuleByPurchaseCount extends Rule {
-
     @CsvBindByName
     protected float minimalCost;
-
     @CsvBindByName
-    protected float discount;
+    protected float discountPercent;
 
     public RuleByPurchaseCount() {
     }
@@ -20,12 +18,12 @@ public class RuleByPurchaseCount extends Rule {
     public RuleByPurchaseCount(String name, float minimalCost, float discount) {
         this.name = name;
         this.minimalCost = minimalCost;
-        this.discount = discount;
+        this.discountPercent = discount;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), minimalCost, discount);
+        return Objects.hash(super.hashCode(), minimalCost, discountPercent);
     }
 
     @Override
@@ -34,7 +32,7 @@ public class RuleByPurchaseCount extends Rule {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         RuleByPurchaseCount that = (RuleByPurchaseCount) o;
-        return Float.compare(that.minimalCost, minimalCost) == 0 && Float.compare(that.discount, discount) == 0;
+        return Float.compare(that.minimalCost, minimalCost) == 0 && Float.compare(that.discountPercent, discountPercent) == 0;
     }
 
     @Override
@@ -55,11 +53,11 @@ public class RuleByPurchaseCount extends Rule {
         this.minimalCost = minimalCost;
     }
 
-    public float getDiscount() {
-        return discount;
+    public float getDiscountPercent() {
+        return discountPercent;
     }
 
-    public void setDiscount(float discount) {
-        this.discount = discount;
+    public void setDiscountPercent(float discountPercent) {
+        this.discountPercent = discountPercent;
     }
 }

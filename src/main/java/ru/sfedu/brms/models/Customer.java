@@ -18,8 +18,9 @@ public class Customer implements Serializable {
     private String phoneNumber;
     @CsvBindByName
     private String email;
-    private List<Check> checks;
+    @CsvCustomBindByName(converter = UUIDConverter.class)
     private UUID retailId;
+    private List<StoreCheck> checks;
 
     public Customer() {
     }
@@ -63,11 +64,11 @@ public class Customer implements Serializable {
         this.retailId = retailId;
     }
 
-    public List<Check> getChecks() {
+    public List<StoreCheck> getChecks() {
         return checks;
     }
 
-    public void setChecks(List<Check> checks) {
+    public void setChecks(List<StoreCheck> checks) {
         this.checks = checks;
     }
 
