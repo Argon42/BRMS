@@ -385,10 +385,10 @@ public abstract class DataProvider implements IDataProvider {
             throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
 
         if (check.getCost() < 0)
-            throw new IllegalArgumentException(String.format(Constants.ARGUMENT_WITH_INCORRECT_FIELD, "cost", check.getCost()));
+            throw new IllegalArgumentException(String.format(Constants.ARGUMENT_WITH_INCORRECT_FIELD, Constants.FIELD_STORE_CHECK_COST, check.getCost()));
 
         if (check.getCountOfGoods() <= 0)
-            throw new IllegalArgumentException(String.format(Constants.ARGUMENT_WITH_INCORRECT_FIELD, "countOfGoods", check.getCost()));
+            throw new IllegalArgumentException(String.format(Constants.ARGUMENT_WITH_INCORRECT_FIELD, Constants.FIELD_STORE_CHECK_COUNT_OF_GOODS, check.getCost()));
 
        if(check.getId() == null)
            return false;
