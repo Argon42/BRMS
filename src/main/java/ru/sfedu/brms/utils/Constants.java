@@ -75,6 +75,8 @@ public class Constants {
     public static final String SQL_UPDATE_CUSTOMER = "UPDATE %s SET %s='%s', %s='%s', %s='%s', %s='%s' WHERE id='%s';";
     public static final String SQL_UPDATE_RETAIL = "UPDATE %s SET %s='%s', %s=%d WHERE id='%s';";
 
+    public static final String SQL_DROP_TABLE = "DROP TABLE IF EXISTS %s";
+
     public static final String SQL_CREATE_TABLE_CHECK =
             "CREATE TABLE IF NOT EXISTS %s(" +
                     "%s VARCHAR(36) PRIMARY KEY, " +

@@ -11,6 +11,7 @@ import ru.sfedu.brms.models.rules.Rule;
 import ru.sfedu.brms.utils.Constants;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,6 +28,30 @@ public abstract class FileDataProvider extends DataProvider {
         RuleTypes.loadAllClassesRules().forEach(this::createFolder);
         createFolder(Customer.class);
         createFolder(StoreCheck.class);
+    }
+
+    @Override
+    public void dropAll() {
+        try {
+            String path = loadRootPath();
+            Path fullPath = Paths.get(loadRootPath());
+            if (deleteRecursive(new File(path))) {
+                log.info("Path {} deleted", fullPath);
+            }
+        } catch (Exception e) {
+            log.error(e);
+        }
+    }
+
+    public boolean deleteRecursive(File path) throws FileNotFoundException {
+        if (!path.exists()) throw new FileNotFoundException(path.getAbsolutePath());
+        boolean ret = true;
+        if (path.isDirectory()) {
+            for (File f : Objects.requireNonNull(path.listFiles())) {
+                ret = ret && deleteRecursive(f);
+            }
+        }
+        return ret && path.delete();
     }
 
     @Override

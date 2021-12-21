@@ -45,6 +45,25 @@ public class JdbcDataProvider extends DataProvider {
     }
 
     @Override
+    public void dropAll() {
+        try {
+            url = ConfigurationUtil.getConfigurationEntry(Constants.JDBC_URL);
+            username = ConfigurationUtil.getConfigurationEntry(Constants.JDBC_USERNAME);
+            password = ConfigurationUtil.getConfigurationEntry(Constants.JDBC_PASSWORD);
+        } catch (Exception e) {
+            log.error(e);
+        }
+        execute(SqlUtil.dropTables(new String[]{
+                Retail.class.getSimpleName(),
+                StoreCheck.class.getSimpleName(),
+                Customer.class.getSimpleName(),
+                RuleByTime.class.getSimpleName(),
+                RuleByPurchaseCount.class.getSimpleName(),
+                RuleByCountOfGoods.class.getSimpleName()
+        }));
+    }
+
+    @Override
     public List<Rule> searchAllRules() {
         List<Rule> ruleList = new ArrayList<>();
         executeQuery(SqlUtil.selectRulesByTime(), set ->

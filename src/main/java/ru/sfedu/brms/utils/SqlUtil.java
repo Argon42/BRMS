@@ -378,4 +378,7 @@ public class SqlUtil {
         return retail;
     }
 
+    public static String dropTables(String[] tables) {
+        return String.format(Constants.SQL_DROP_TABLE, String.join(", ", tables));
+    }
 }

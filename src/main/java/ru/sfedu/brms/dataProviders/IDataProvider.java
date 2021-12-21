@@ -49,4 +49,6 @@ public interface IDataProvider {
     void editRetail(Retail retail);
 
     Optional<Retail> findRetailByID(UUID id);
+
+    void dropAll();
 }
