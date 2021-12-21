@@ -3,17 +3,24 @@ package ru.sfedu.brms.dataProviders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.sfedu.brms.HistoryUtil;
-import ru.sfedu.brms.models.StoreCheck;
 import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.HistoryContent;
 import ru.sfedu.brms.models.Retail;
+import ru.sfedu.brms.models.StoreCheck;
+import ru.sfedu.brms.models.enums.DisplayVariants;
 import ru.sfedu.brms.models.enums.Result;
+import ru.sfedu.brms.models.enums.RuleValidateType;
 import ru.sfedu.brms.models.rules.Rule;
+import ru.sfedu.brms.models.rules.RuleByCountOfGoods;
+import ru.sfedu.brms.models.rules.RuleByPurchaseCount;
+import ru.sfedu.brms.models.rules.RuleByTime;
 import ru.sfedu.brms.utils.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public abstract class DataProvider implements IDataProvider {
 
@@ -303,6 +310,107 @@ public abstract class DataProvider implements IDataProvider {
             saveHistory(createHistoryContent(customer, Result.ERROR));
             throw e;
         }
+    }
+
+
+    @Override
+    public List<Rule> searchAvailableRules(UUID checkId) {
+        return searchAvailableRules(findCheckByID(checkId).get());
+    }
+
+    @Override
+    public List<Rule> searchAvailableRules(UUID checkId, UUID customerId) {
+        List<Rule> rules = new ArrayList<>();
+        var check = findCheckByID(checkId);
+        var customer = findCustomerByID(customerId);
+        if (check.isPresent()) {
+            rules.addAll(searchAvailableRules(check.get()));
+            customer.ifPresent(value -> rules.addAll(searchAvailableRules(check.get(), value)));
+        }
+        return rules;
+    }
+
+    @Override
+    public List<Rule> findRuleForChecks(List<Rule> rulesForSearch) {
+        return rulesForSearch.stream()
+                .filter(rule -> rule.getValidateType() == RuleValidateType.CHECK)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Rule> findRuleForCustomers(List<Rule> rulesForSearch) {
+        return rulesForSearch.stream()
+                .filter(rule -> rule.getValidateType() == RuleValidateType.CUSTOMER)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Rule> findRuleForChecksAndCustomers(List<Rule> rulesForSearch) {
+        return rulesForSearch.stream()
+                .filter(rule -> rule.getValidateType() == RuleValidateType.CHECK_AND_CUSTOMER)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Rule> findEnabledRules(List<Rule> rulesForSearch) {
+        return rulesForSearch.stream()
+                .filter(Rule::isEnable)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String displayStatistic(String searchCriteria) {
+        List<Rule> rules = new ArrayList<>();
+        List<Rule> allRules = searchAllRules();
+        if (searchCriteria.contains(DisplayVariants.RULE_FOR_CHECKS.toString()))
+            rules.addAll(findRuleForChecks(allRules));
+
+        if (searchCriteria.contains(DisplayVariants.ENABLED_RULES.toString()))
+            rules.addAll(findEnabledRules(allRules));
+
+        if (searchCriteria.contains(DisplayVariants.RULE_FOR_CUSTOMERS.toString()))
+            rules.addAll(findRuleForCustomers(allRules));
+
+        if (searchCriteria.contains(DisplayVariants.RULE_FOR_CHECK_AND_CUSTOMERS.toString()))
+            rules.addAll(findRuleForChecksAndCustomers(allRules));
+
+        StringBuilder builder = new StringBuilder();
+        rules.forEach(rule -> builder.append(rules).append('\n'));
+        return builder.toString();
+    }
+
+    private List<Rule> searchAvailableRules(StoreCheck storeCheck, Customer customer) {
+        return searchAllRules().stream().filter(rule -> {
+            if(rule.getRetail().getId() != customer.getRetailId() || !customer.getChecks().contains(storeCheck))
+                return false;
+            switch (rule.getRuleType()) {
+                case RULE_BY_PURCHASE_COUNT:
+                    return customer.getChecks().stream().mapToDouble(storeCheck1 -> storeCheck.getCost()).sum() > ((RuleByPurchaseCount) rule).getMinimalCost();
+                case RULE_BY_COUNT_OF_GOODS:
+                    return storeCheck.getCountOfGoods() > ((RuleByCountOfGoods) rule).getMinimalCountOfGoods();
+                case RULE_BY_TIME:
+                    var ruleByTime = (RuleByTime) rule;
+                    return ruleByTime.getStartTime().isBefore(storeCheck.getTime()) && ruleByTime.getEndTime().isAfter(storeCheck.getTime());
+            }
+            return false;
+        }).collect(Collectors.toList());
+    }
+
+    private List<Rule> searchAvailableRules(StoreCheck storeCheck) {
+        return searchAllRules().stream().filter(rule -> {
+            if(!rule.getRetail().getChecks().contains(storeCheck))
+                return false;
+            switch (rule.getRuleType()) {
+                case RULE_BY_PURCHASE_COUNT:
+                    return false;
+                case RULE_BY_COUNT_OF_GOODS:
+                    return storeCheck.getCountOfGoods() > ((RuleByCountOfGoods) rule).getMinimalCountOfGoods();
+                case RULE_BY_TIME:
+                    var ruleByTime = (RuleByTime) rule;
+                    return ruleByTime.getStartTime().isBefore(storeCheck.getTime()) && ruleByTime.getEndTime().isAfter(storeCheck.getTime());
+            }
+            return false;
+        }).collect(Collectors.toList());
     }
 
     protected abstract Retail save(Retail retail);

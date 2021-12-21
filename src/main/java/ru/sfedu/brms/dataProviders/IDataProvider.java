@@ -51,4 +51,18 @@ public interface IDataProvider {
     Optional<Retail> findRetailByID(UUID id);
 
     void dropAll();
+
+    List<Rule> searchAvailableRules(UUID checkId);
+
+    List<Rule> searchAvailableRules(UUID checkId, UUID customerId);
+
+    List<Rule> findRuleForChecks(List<Rule> rulesForSearch);
+
+    List<Rule> findRuleForCustomers(List<Rule> rulesForSearch);
+
+    List<Rule> findRuleForChecksAndCustomers(List<Rule> rulesForSearch);
+
+    List<Rule> findEnabledRules(List<Rule> rulesForSearch);
+
+    String displayStatistic(String searchCriteria);
 }
