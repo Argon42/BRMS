@@ -47,7 +47,9 @@ public class RuleByTime extends Rule {
                 "enable=" + enable +
                 ", id=" + id +
                 ", name='" + name + '\'' +
+                ", retailId=" + retailId +
                 ", description='" + description + '\'' +
+                ", retail=" + retail +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", discount=" + discount +

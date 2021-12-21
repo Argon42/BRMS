@@ -11,4 +11,9 @@ public class JdbcDataProviderTest extends DataProviderTest {
     protected IDataProvider loadDataProvider() {
         return new JdbcDataProvider();
     }
+
+    @Override
+    protected Logger getLog() {
+        return log;
+    }
 }

@@ -27,7 +27,7 @@ public class Retail implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Retail)) return false;
         Retail retail = (Retail) o;
-        return Objects.equals(getId(), retail.getId()) && Objects.equals(getCountOfStores(), retail.getCountOfStores()) && Objects.equals(getName(), retail.getName()) && Objects.equals(getCustomers(), retail.getCustomers()) && Objects.equals(getChecks(), retail.getChecks());
+        return getCountOfStores() == retail.getCountOfStores() && Objects.equals(getId(), retail.getId()) && Objects.equals(getName(), retail.getName());
     }
 
     @Override

@@ -16,11 +16,11 @@ public interface IDataProvider {
 
     void deleteRule(UUID id);
 
-    Rule editRule(Rule rule);
+    void editRule(Rule rule);
 
-    Rule enableRule(UUID id);
+    void enableRule(UUID id);
 
-    Rule disableRule(UUID id);
+    void disableRule(UUID id);
 
     List<Rule> searchAllRules();
 
@@ -30,7 +30,7 @@ public interface IDataProvider {
 
     void deleteCheck(UUID id);
 
-    StoreCheck editCheck(StoreCheck check);
+    void editCheck(StoreCheck check);
 
     Optional<StoreCheck> findCheckByID(UUID id);
 
@@ -38,7 +38,7 @@ public interface IDataProvider {
 
     void deleteCustomer(UUID id);
 
-    Customer editCustomer(Customer customer);
+    void editCustomer(Customer customer);
 
     Optional<Customer> findCustomerByID(UUID id);
 
@@ -46,7 +46,7 @@ public interface IDataProvider {
 
     void deleteRetail(UUID id);
 
-    Retail editRetail(Retail retail);
+    void editRetail(Retail retail);
 
     Optional<Retail> findRetailByID(UUID id);
 }

@@ -66,14 +66,13 @@ public abstract class DataProvider implements IDataProvider {
     }
 
     @Override
-    public Retail editRetail(Retail retail) {
+    public void editRetail(Retail retail) {
         log.info("Edit retail: {}", retail);
 
         try {
             Retail editedRetail = update(retail);
             log.info("Retail edited: {}", retail);
             saveHistory(createHistoryContent(editedRetail, Result.SUCCESS));
-            return editedRetail;
         } catch (Exception e) {
             log.error(e);
             saveHistory(createHistoryContent(retail, Result.ERROR));
@@ -126,14 +125,13 @@ public abstract class DataProvider implements IDataProvider {
     }
 
     @Override
-    public Rule editRule(Rule rule) {
+    public void editRule(Rule rule) {
         log.info("Edit rule: {}", rule);
 
         try {
             Rule editedRule = update(rule);
             log.info("Rule edited: {}", rule);
             saveHistory(createHistoryContent(editedRule, Result.SUCCESS));
-            return editedRule;
         } catch (Exception e) {
             log.error(e);
             saveHistory(createHistoryContent(rule, Result.ERROR));
@@ -142,7 +140,7 @@ public abstract class DataProvider implements IDataProvider {
     }
 
     @Override
-    public Rule enableRule(UUID id) {
+    public void enableRule(UUID id) {
         log.info("Enable rule: {}", id);
 
         Optional<Rule> rule = findRuleByID(id);
@@ -158,7 +156,6 @@ public abstract class DataProvider implements IDataProvider {
             Rule editedRule = update(rule.get());
             log.info("Rule Enabled: {}", rule);
             saveHistory(createHistoryContent(editedRule, Result.SUCCESS));
-            return editedRule;
         } catch (Exception e) {
             log.error(e);
             saveHistory(createHistoryContent(rule, Result.ERROR));
@@ -167,7 +164,7 @@ public abstract class DataProvider implements IDataProvider {
     }
 
     @Override
-    public Rule disableRule(UUID id) {
+    public void disableRule(UUID id) {
         log.info("Disable rule: {}", id);
 
         Optional<Rule> rule = findRuleByID(id);
@@ -183,7 +180,6 @@ public abstract class DataProvider implements IDataProvider {
             Rule editedRule = update(rule.get());
             log.info("Rule Disabled: {}", editedRule);
             saveHistory(createHistoryContent(editedRule, Result.SUCCESS));
-            return editedRule;
         } catch (Exception e) {
             log.error(e);
             saveHistory(createHistoryContent(rule, Result.ERROR));
@@ -236,14 +232,13 @@ public abstract class DataProvider implements IDataProvider {
     }
 
     @Override
-    public StoreCheck editCheck(StoreCheck check) {
+    public void editCheck(StoreCheck check) {
         log.info("Edit check: {}", check);
 
         try {
             StoreCheck editedCheck = update(check);
             log.info("Check edited: {}", check);
             saveHistory(createHistoryContent(editedCheck, Result.SUCCESS));
-            return editedCheck;
         } catch (Exception e) {
             log.error(e);
             saveHistory(createHistoryContent(check, Result.ERROR));
@@ -296,14 +291,13 @@ public abstract class DataProvider implements IDataProvider {
     }
 
     @Override
-    public Customer editCustomer(Customer customer) {
+    public void editCustomer(Customer customer) {
         log.info("Edit rule: {}", customer);
 
         try {
             Customer editedCustomer = update(customer);
             log.info("Customer edited: {}", customer);
             saveHistory(createHistoryContent(editedCustomer, Result.SUCCESS));
-            return editedCustomer;
         } catch (Exception e) {
             log.error(e);
             saveHistory(createHistoryContent(customer, Result.ERROR));

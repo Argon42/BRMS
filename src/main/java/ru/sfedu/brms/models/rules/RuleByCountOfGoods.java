@@ -41,7 +41,9 @@ public class RuleByCountOfGoods extends Rule {
                 "enable=" + enable +
                 ", id=" + id +
                 ", name='" + name + '\'' +
+                ", retailId=" + retailId +
                 ", description='" + description + '\'' +
+                ", retail=" + retail +
                 ", minimalCountOfGoods=" + minimalCountOfGoods +
                 ", discount=" + discount +
                 '}';

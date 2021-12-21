@@ -78,7 +78,10 @@ public class JdbcDataProvider extends DataProvider {
             }
         });
 
-        return ruleList;
+        return ruleList.stream()
+                .peek(rule -> findRetailByID(rule.getRetailId())
+                        .ifPresent(rule::setRetail))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -111,6 +114,7 @@ public class JdbcDataProvider extends DataProvider {
             try {
                 while (set != null && set.next()) {
                     customer.set(Optional.of(SqlUtil.readCustomer(set)));
+                    customer.get().get().setChecks(findAllChecksByCustomer(customer.get().get().getId()));
                 }
             } catch (SQLException e) {
                 log.error(e);
@@ -121,24 +125,23 @@ public class JdbcDataProvider extends DataProvider {
 
     @Override
     public Optional<Retail> findRetailByID(UUID id) {
-        AtomicReference<Optional<Retail>> retail = new AtomicReference<>(Optional.empty());
+        AtomicReference<Optional<Retail>> retailReference = new AtomicReference<>(Optional.empty());
         executeQuery(SqlUtil.selectRetailWithId(id), set -> {
             try {
                 while (set != null && set.next()) {
-                    retail.set(Optional.of(SqlUtil.readRetail(set)));
-                    if (retail.get().isEmpty())
-                        throw new IllegalArgumentException(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION);
-                    retail.get().get().setCustomers(findAllCustomersByRetail(retail.get().get().getId()));
-                    retail.get().get().setChecks(retail.get().get().getCustomers().stream()
+                    var retail = SqlUtil.readRetail(set);
+                    retail.setCustomers(findAllCustomersByRetail(retail.getId()));
+                    retail.setChecks(retail.getCustomers().stream()
                             .flatMap(customer -> findAllChecksByCustomer(customer.getId()).stream())
                             .collect(Collectors.toList())
                     );
+                    retailReference.set(Optional.of(retail));
                 }
             } catch (SQLException e) {
                 log.error(e);
             }
         });
-        return retail.get();
+        return retailReference.get();
     }
 
     @Override
@@ -204,17 +207,19 @@ public class JdbcDataProvider extends DataProvider {
 
     @Override
     protected List<Customer> findAllCustomersByRetail(UUID id) {
-        List<Customer> checks = new ArrayList<>();
+        List<Customer> customers = new ArrayList<>();
         executeQuery(SqlUtil.selectChecksWithCustomerId(id), set -> {
             try {
                 while (set != null && set.next()) {
-                    checks.add(SqlUtil.readCustomer(set));
+                    Customer customer = SqlUtil.readCustomer(set);
+                    customer.setChecks(findAllChecksByCustomer(customer.getId()));
+                    customers.add(customer);
                 }
             } catch (SQLException e) {
                 log.error(e);
             }
         });
-        return checks;
+        return customers;
     }
 
     @Override

@@ -2,9 +2,9 @@ package ru.sfedu.brms.dataProviders;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.sfedu.brms.models.StoreCheck;
 import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.Retail;
+import ru.sfedu.brms.models.StoreCheck;
 import ru.sfedu.brms.models.enums.Result;
 import ru.sfedu.brms.models.enums.RuleTypes;
 import ru.sfedu.brms.models.rules.Rule;
@@ -34,6 +34,11 @@ public abstract class FileDataProvider extends DataProvider {
         return fileToBean(Retail.class)
                 .stream()
                 .filter(retail -> Objects.equals(retail.getId(), id))
+                .peek(retail -> retail.setCustomers(findAllCustomersByRetail(retail.getId())))
+                .peek(retail -> retail.setChecks(
+                        retail.getCustomers().stream()
+                                .flatMap(customer -> findAllChecksByCustomer(customer.getId()).stream())
+                                .collect(Collectors.toList())))
                 .findFirst();
     }
 
@@ -51,6 +56,8 @@ public abstract class FileDataProvider extends DataProvider {
         return this.searchAllRules()
                 .stream()
                 .filter(rule -> Objects.equals(rule.getId(), id))
+                .peek(rule -> findRetailByID(rule.getRetailId())
+                        .ifPresent(rule::setRetail))
                 .findFirst();
     }
 
@@ -95,12 +102,6 @@ public abstract class FileDataProvider extends DataProvider {
         retail.setId(UUID.randomUUID());
         newCollection.add(retail);
         beanToFile(newCollection, retail.getClass());
-        retail.setCustomers(findAllCustomersByRetail(retail.getId()));
-        retail.setChecks(
-                retail.getCustomers().stream()
-                        .flatMap(customer -> findAllChecksByCustomer(customer.getId()).stream())
-                        .collect(Collectors.toList())
-        );
         return retail;
     }
 
@@ -123,7 +124,7 @@ public abstract class FileDataProvider extends DataProvider {
         List<Retail> newCollection = (List<Retail>) fileToBean(retail.getClass());
         Optional<Retail> foundedRetail = newCollection
                 .stream()
-                .filter(customer1 -> Objects.equals(customer1.getId(), retail.getId()))
+                .filter(retail1 -> Objects.equals(retail1.getId(), retail.getId()))
                 .findFirst();
         if (foundedRetail.isEmpty())
             throw new IllegalArgumentException(String.format(Constants.OBJECT_WITH_ID_NOT_FOUND_EXCEPTION, retail.getId()));
@@ -131,12 +132,6 @@ public abstract class FileDataProvider extends DataProvider {
         int index = newCollection.indexOf(foundedRetail.get());
         newCollection.set(index, retail);
         beanToFile(newCollection, retail.getClass());
-        retail.setCustomers(findAllCustomersByRetail(retail.getId()));
-        retail.setChecks(
-                retail.getCustomers().stream()
-                        .flatMap(customer -> findAllChecksByCustomer(customer.getId()).stream())
-                        .collect(Collectors.toList())
-        );
         return retail;
     }
 
@@ -166,7 +161,6 @@ public abstract class FileDataProvider extends DataProvider {
         int index = newCollection.indexOf(foundedCustomer.get());
         newCollection.set(index, customer);
         beanToFile(newCollection, customer.getClass());
-        customer.setChecks(findAllChecksByCustomer(customer.getId()));
         return customer;
     }
 

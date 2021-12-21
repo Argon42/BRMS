@@ -22,6 +22,20 @@ public class RuleByPurchaseCount extends Rule {
     }
 
     @Override
+    public String toString() {
+        return "RuleByPurchaseCount{" +
+                "enable=" + enable +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", retailId=" + retailId +
+                ", description='" + description + '\'' +
+                ", retail=" + retail +
+                ", minimalCost=" + minimalCost +
+                ", discountPercent=" + discountPercent +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), minimalCost, discountPercent);
     }

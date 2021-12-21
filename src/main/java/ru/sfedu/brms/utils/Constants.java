@@ -26,6 +26,7 @@ public class Constants {
     public static final String FIELD_RULE_ID = "id";
     public static final String FIELD_RULE_NAME = "name";
     public static final String FIELD_RULE_DESCRIPTION = "description";
+    public static final String FIELD_RULE_RETAIL_ID = "retailId";
 
     public static final String FIELD_RULE_BY_TIME_START = "startTime";
     public static final String FIELD_RULE_BY_TIME_END = "endTime";
@@ -54,9 +55,9 @@ public class Constants {
     public static final String FIELD_RETAIL_COUNT_OF_STORES = "countOfStores";
 
 
-    public static final String SQL_INSERT_RULE_BY_PURCHASE_COUNT = "INSERT INTO %s VALUES('%s', '%s', '%s', %.00f, %.00f);";
-    public static final String SQL_INSERT_RULE_BY_COUNT_OF_GOODS = "INSERT INTO %s VALUES('%s', '%s', '%s', %d, %d);";
-    public static final String SQL_INSERT_RULE_BY_TIME = "INSERT INTO %s VALUES('%s', '%s', '%s', '%s', '%s', %.00f);";
+    public static final String SQL_INSERT_RULE_BY_PURCHASE_COUNT = "INSERT INTO %s VALUES('%s', '%s', '%s', '%s', %.00f, %.00f);";
+    public static final String SQL_INSERT_RULE_BY_COUNT_OF_GOODS = "INSERT INTO %s VALUES('%s', '%s', '%s', '%s', %d, %d);";
+    public static final String SQL_INSERT_RULE_BY_TIME = "INSERT INTO %s VALUES('%s', '%s', '%s', '%s', '%s', '%s', %.00f);";
     public static final String SQL_INSERT_STORE_CHECK = "INSERT INTO %s VALUES('%s', '%s', %.00f, %d, '%s');";
     public static final String SQL_INSERT_CUSTOMER = "INSERT INTO %s VALUES('%s', '%s', '%s', '%s', '%s');";
     public static final String SQL_INSERT_RETAIL = "INSERT INTO %s VALUES('%s', '%s', %d);";
@@ -67,12 +68,12 @@ public class Constants {
 
     public static final String SQL_DELETE_WHERE_ID = "DELETE FROM %s WHERE id = '%s';";
 
-    public static final String SQL_UPDATE_RULE_BY_PURCHASE_COUNT = "UPDATE %s SET %s='%s', %s='%s', %s='%s', %s=%.00f, %s=%.000f;";
-    public static final String SQL_UPDATE_RULE_BY_COUNT_OF_GOODS = "UPDATE %s SET %s='%s', %s='%s', %s='%s', %s=%d, %s=%d;";
-    public static final String SQL_UPDATE_RULE_BY_TIME = "UPDATE %s SET %s='%s', %s='%s', %s='%s', %s='%s', %s='%s', %s=%.000f;";
-    public static final String SQL_UPDATE_CHECK = "UPDATE %s SET %s='%s', %s='%s', %s=%.00f, %s=%d, %s='%s';";
-    public static final String SQL_UPDATE_CUSTOMER = "UPDATE %s SET %s='%s', %s='%s', %s='%s', %s='%s', %s='%s';";
-    public static final String SQL_UPDATE_RETAIL = "UPDATE %s SET %s='%s', %s='%s', %s=%d;";
+    public static final String SQL_UPDATE_RULE_BY_PURCHASE_COUNT = "UPDATE %s SET %s='%s', %s='%s', %s='%s', %s=%.00f, %s=%.000f WHERE id='%s';";
+    public static final String SQL_UPDATE_RULE_BY_COUNT_OF_GOODS = "UPDATE %s SET %s='%s', %s='%s', %s='%s', %s=%d, %s=%d WHERE id='%s';";
+    public static final String SQL_UPDATE_RULE_BY_TIME = "UPDATE %s SET %s='%s', %s='%s', %s='%s', %s='%s', %s='%s', %s=%.000f WHERE id='%s';";
+    public static final String SQL_UPDATE_CHECK = "UPDATE %s SET %s='%s', %s=%.00f, %s=%d, %s='%s' WHERE id='%s';";
+    public static final String SQL_UPDATE_CUSTOMER = "UPDATE %s SET %s='%s', %s='%s', %s='%s', %s='%s' WHERE id='%s';";
+    public static final String SQL_UPDATE_RETAIL = "UPDATE %s SET %s='%s', %s=%d WHERE id='%s';";
 
     public static final String SQL_CREATE_TABLE_CHECK =
             "CREATE TABLE IF NOT EXISTS %s(" +
@@ -101,6 +102,7 @@ public class Constants {
                     "%s VARCHAR(36) PRIMARY KEY, " +
                     "%s VARCHAR(255), " +
                     "%s VARCHAR(255), " +
+                    "%s VARCHAR(36), " +
                     "%s VARCHAR(255), " +
                     "%s VARCHAR(255), " +
                     "%s INT" +
@@ -110,6 +112,7 @@ public class Constants {
                     "%s VARCHAR(36) PRIMARY KEY, " +
                     "%s VARCHAR(255), " +
                     "%s VARCHAR(255), " +
+                    "%s VARCHAR(36), " +
                     "%s DOUBLE PRECISION, " +
                     "%s DOUBLE PRECISION" +
                     ");";
@@ -118,6 +121,7 @@ public class Constants {
                     "%s VARCHAR(36) PRIMARY KEY, " +
                     "%s VARCHAR(255), " +
                     "%s VARCHAR(255), " +
+                    "%s VARCHAR(36), " +
                     "%s INT, " +
                     "%s INT" +
                     ");";
