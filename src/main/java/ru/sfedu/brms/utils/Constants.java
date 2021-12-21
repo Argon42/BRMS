@@ -127,4 +127,11 @@ public class Constants {
                     "%s INT, " +
                     "%s INT" +
                     ");";
+
+    public static final String MAIN_CSV = "CsvDataProvider";
+    public static final String MAIN_XML = "XmlDataProvider";
+    public static final String MAIN_JDBC = "JdbcDataProvider";
+    public static final String MAIN_END_MESSAGE = "";
+    public static final String MAIN_METHOD_NOT_FOUND = "Method not founded";
+    public static final String MAIN_INCORRECT_ARGS = "One or more arguments is incorrect";
 }
