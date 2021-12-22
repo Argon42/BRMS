@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Csv data provider.
+ */
 public class CSVDataProvider extends FileDataProvider {
     private static final Logger log = LogManager.getLogger(CSVDataProvider.class);
 

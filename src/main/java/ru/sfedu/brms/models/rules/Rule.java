@@ -11,17 +11,38 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * The type Rule.
+ */
 public abstract class Rule implements Serializable {
+    /**
+     * The Enable.
+     */
     @CsvBindByName
     protected boolean enable;
+    /**
+     * The Id.
+     */
     @CsvCustomBindByName(converter = UUIDConverter.class)
     protected UUID id;
+    /**
+     * The Name.
+     */
     @CsvBindByName
     protected String name;
+    /**
+     * The Retail id.
+     */
     @CsvCustomBindByName(converter = UUIDConverter.class)
     protected UUID retailId;
+    /**
+     * The Description.
+     */
     @CsvBindByName
     protected String description;
+    /**
+     * The Retail.
+     */
     protected Retail retail;
 
     @Override
@@ -49,55 +70,125 @@ public abstract class Rule implements Serializable {
                 '}';
     }
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public UUID getId() {
         return id;
     }
 
+    /**
+     * Sets id.
+     *
+     * @param id the id
+     */
     public void setId(UUID id) {
         this.id = id;
     }
 
+    /**
+     * Gets description.
+     *
+     * @return the description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Sets description.
+     *
+     * @param description the description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets name.
+     *
+     * @param name the name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Is enable boolean.
+     *
+     * @return the boolean
+     */
     public boolean isEnable() {
         return enable;
     }
 
+    /**
+     * Sets enable.
+     *
+     * @param enable the enable
+     */
     public void setEnable(boolean enable) {
         this.enable = enable;
     }
 
+    /**
+     * Gets retail id.
+     *
+     * @return the retail id
+     */
     public UUID getRetailId() {
         return retailId;
     }
 
+    /**
+     * Sets retail id.
+     *
+     * @param retailId the retail id
+     */
     public void setRetailId(UUID retailId) {
         this.retailId = retailId;
     }
 
+    /**
+     * Gets retail.
+     *
+     * @return the retail
+     */
     public Retail getRetail() {
         return retail;
     }
 
+    /**
+     * Sets retail.
+     *
+     * @param retail the retail
+     */
     public void setRetail(Retail retail) {
         this.retail = retail;
     }
 
+    /**
+     * Gets rule type.
+     *
+     * @return the rule type
+     */
     public abstract RuleTypes getRuleType();
 
+    /**
+     * Gets validate type.
+     *
+     * @return the validate type
+     */
     public abstract RuleValidateType getValidateType();
 }

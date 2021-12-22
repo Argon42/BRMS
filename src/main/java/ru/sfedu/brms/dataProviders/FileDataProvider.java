@@ -19,6 +19,9 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * The type File data provider.
+ */
 public abstract class FileDataProvider extends DataProvider {
 
     private static final Logger log = LogManager.getLogger(FileDataProvider.class);
@@ -43,7 +46,7 @@ public abstract class FileDataProvider extends DataProvider {
         }
     }
 
-    public boolean deleteRecursive(File path) throws FileNotFoundException {
+    private boolean deleteRecursive(File path) throws FileNotFoundException {
         if (!path.exists()) throw new FileNotFoundException(path.getAbsolutePath());
         boolean ret = true;
         if (path.isDirectory()) {
@@ -280,15 +283,50 @@ public abstract class FileDataProvider extends DataProvider {
         beanToFile(newCollection, rule.getClass());
     }
 
+    /**
+     * After create folder.
+     *
+     * @param ruleClass the rule class
+     * @param fullPath  the full path
+     */
     protected void afterCreateFolder(Class<?> ruleClass, String fullPath) {
     }
 
+    /**
+     * File to bean list.
+     *
+     * @param <T>      the type parameter
+     * @param beanType the bean type
+     * @return the list
+     */
     protected abstract <T> List<T> fileToBean(Class<T> beanType);
 
+    /**
+     * Bean to file result.
+     *
+     * @param <T>       the type parameter
+     * @param beans     the beans
+     * @param beanClass the bean class
+     * @return the result
+     */
     protected abstract <T> Result beanToFile(List<?> beans, Class<?> beanClass);
 
+    /**
+     * Create path string.
+     *
+     * @param <T>    the type parameter
+     * @param object the object
+     * @return the string
+     * @throws IOException the io exception
+     */
     protected abstract <T> String createPath(Class<T> object) throws IOException;
 
+    /**
+     * Load root path string.
+     *
+     * @return the string
+     * @throws IOException the io exception
+     */
     protected abstract String loadRootPath() throws IOException;
 
     private void createFolder(Class<?> ruleClass) {

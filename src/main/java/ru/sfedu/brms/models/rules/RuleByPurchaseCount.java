@@ -6,15 +6,34 @@ import ru.sfedu.brms.models.enums.RuleValidateType;
 
 import java.util.Objects;
 
+/**
+ * The type Rule by purchase count.
+ */
 public class RuleByPurchaseCount extends Rule {
+    /**
+     * The Minimal cost.
+     */
     @CsvBindByName
     protected float minimalCost;
+    /**
+     * The Discount percent.
+     */
     @CsvBindByName
     protected float discountPercent;
 
+    /**
+     * Instantiates a new Rule by purchase count.
+     */
     public RuleByPurchaseCount() {
     }
 
+    /**
+     * Instantiates a new Rule by purchase count.
+     *
+     * @param name        the name
+     * @param minimalCost the minimal cost
+     * @param discount    the discount
+     */
     public RuleByPurchaseCount(String name, float minimalCost, float discount) {
         this.name = name;
         this.minimalCost = minimalCost;
@@ -59,18 +78,38 @@ public class RuleByPurchaseCount extends Rule {
         return RuleValidateType.CUSTOMER;
     }
 
+    /**
+     * Gets minimal cost.
+     *
+     * @return the minimal cost
+     */
     public float getMinimalCost() {
         return minimalCost;
     }
 
+    /**
+     * Sets minimal cost.
+     *
+     * @param minimalCost the minimal cost
+     */
     public void setMinimalCost(float minimalCost) {
         this.minimalCost = minimalCost;
     }
 
+    /**
+     * Gets discount percent.
+     *
+     * @return the discount percent
+     */
     public float getDiscountPercent() {
         return discountPercent;
     }
 
+    /**
+     * Sets discount percent.
+     *
+     * @param discountPercent the discount percent
+     */
     public void setDiscountPercent(float discountPercent) {
         this.discountPercent = discountPercent;
     }

@@ -9,17 +9,40 @@ import ru.sfedu.brms.models.enums.RuleValidateType;
 import java.time.Instant;
 import java.util.Objects;
 
+/**
+ * The type Rule by time.
+ */
 public class RuleByTime extends Rule {
+    /**
+     * The Start time.
+     */
     @CsvCustomBindByName(converter = InstantConverter.class)
     protected Instant startTime;
+    /**
+     * The End time.
+     */
     @CsvCustomBindByName(converter = InstantConverter.class)
     protected Instant endTime;
+    /**
+     * The Discount.
+     */
     @CsvBindByName
     protected float discount;
 
+    /**
+     * Instantiates a new Rule by time.
+     */
     public RuleByTime() {
     }
 
+    /**
+     * Instantiates a new Rule by time.
+     *
+     * @param name     the name
+     * @param start    the start
+     * @param end      the end
+     * @param discount the discount
+     */
     public RuleByTime(String name, Instant start, Instant end, float discount) {
         this.name = name;
         this.startTime = start;
@@ -66,26 +89,56 @@ public class RuleByTime extends Rule {
         return RuleValidateType.CHECK;
     }
 
+    /**
+     * Gets start time.
+     *
+     * @return the start time
+     */
     public Instant getStartTime() {
         return startTime;
     }
 
+    /**
+     * Sets start time.
+     *
+     * @param startTime the start time
+     */
     public void setStartTime(Instant startTime) {
         this.startTime = startTime;
     }
 
+    /**
+     * Gets end time.
+     *
+     * @return the end time
+     */
     public Instant getEndTime() {
         return endTime;
     }
 
+    /**
+     * Sets end time.
+     *
+     * @param endTime the end time
+     */
     public void setEndTime(Instant endTime) {
         this.endTime = endTime;
     }
 
+    /**
+     * Gets discount.
+     *
+     * @return the discount
+     */
     public float getDiscount() {
         return discount;
     }
 
+    /**
+     * Sets discount.
+     *
+     * @param discount the discount
+     */
     public void setDiscount(float discount) {
         this.discount = discount;
     }

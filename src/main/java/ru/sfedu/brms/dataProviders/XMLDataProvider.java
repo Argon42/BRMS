@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * The type Xml data provider.
+ */
 public class XMLDataProvider extends FileDataProvider {
     private static final Logger log = LogManager.getLogger(XMLDataProvider.class);
 

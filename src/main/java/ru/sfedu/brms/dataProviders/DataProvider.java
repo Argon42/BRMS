@@ -22,6 +22,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * The type Data provider.
+ */
 public abstract class DataProvider implements IDataProvider {
 
     private static final Logger log = LogManager.getLogger(DataProvider.class);
@@ -413,38 +416,130 @@ public abstract class DataProvider implements IDataProvider {
         }).collect(Collectors.toList());
     }
 
+    /**
+     * Save retail.
+     *
+     * @param retail the retail
+     * @return the retail
+     */
     protected abstract Retail save(Retail retail);
 
+    /**
+     * Delete.
+     *
+     * @param retail the retail
+     */
     protected abstract void delete(Retail retail);
 
+    /**
+     * Update retail.
+     *
+     * @param retail the retail
+     * @return the retail
+     */
     protected abstract Retail update(Retail retail);
 
+    /**
+     * Find all checks by customer list.
+     *
+     * @param id the id
+     * @return the list
+     */
     protected abstract List<StoreCheck> findAllChecksByCustomer(UUID id);
 
+    /**
+     * Update customer.
+     *
+     * @param customer the customer
+     * @return the customer
+     */
     protected abstract Customer update(Customer customer);
 
+    /**
+     * Delete.
+     *
+     * @param customer the customer
+     */
     protected abstract void delete(Customer customer);
 
+    /**
+     * Delete.
+     *
+     * @param check the check
+     */
     protected abstract void delete(StoreCheck check);
 
+    /**
+     * Find all customers by retail list.
+     *
+     * @param id the id
+     * @return the list
+     */
     protected abstract List<Customer> findAllCustomersByRetail(UUID id);
 
+    /**
+     * Save customer.
+     *
+     * @param customer the customer
+     * @return the customer
+     */
     protected abstract Customer save(Customer customer);
 
+    /**
+     * Save store check.
+     *
+     * @param check the check
+     * @return the store check
+     */
     protected abstract StoreCheck save(StoreCheck check);
 
+    /**
+     * Update store check.
+     *
+     * @param check the check
+     * @return the store check
+     */
     protected abstract StoreCheck update(StoreCheck check);
 
+    /**
+     * Update rule.
+     *
+     * @param rule the rule
+     * @return the rule
+     */
     protected abstract Rule update(Rule rule);
 
+    /**
+     * Delete.
+     *
+     * @param rule the rule
+     */
     protected abstract void delete(Rule rule);
 
+    /**
+     * Save history.
+     *
+     * @param historyContent the history content
+     */
     protected void saveHistory(HistoryContent historyContent) {
         HistoryUtil.saveToLog(historyContent);
     }
 
+    /**
+     * Save rule.
+     *
+     * @param rule the rule
+     * @return the rule
+     */
     protected abstract Rule save(Rule rule);
 
+    /**
+     * Create history content.
+     *
+     * @param object the object
+     * @param result the result
+     * @return the history content
+     */
     protected HistoryContent createHistoryContent(Object object, Result result) {
         StackTraceElement stackTrace = Thread.currentThread().getStackTrace()[2];
         return new HistoryContent(UUID.randomUUID(),

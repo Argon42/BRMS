@@ -26,6 +26,9 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+/**
+ * The type Jdbc data provider.
+ */
 public class JdbcDataProvider extends DataProvider {
     private static final Logger log = LogManager.getLogger(JdbcDataProvider.class);
 
@@ -359,6 +362,11 @@ public class JdbcDataProvider extends DataProvider {
     }
 
     private interface ResultSetHandler {
+        /**
+         * Invoke.
+         *
+         * @param resultSet the result set
+         */
         void invoke(ResultSet resultSet);
     }
 }

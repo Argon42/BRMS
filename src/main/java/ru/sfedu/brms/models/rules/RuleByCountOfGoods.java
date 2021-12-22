@@ -6,15 +6,34 @@ import ru.sfedu.brms.models.enums.RuleValidateType;
 
 import java.util.Objects;
 
+/**
+ * The type Rule by count of goods.
+ */
 public class RuleByCountOfGoods extends Rule {
+    /**
+     * The Minimal count of goods.
+     */
     @CsvBindByName
     protected int minimalCountOfGoods;
+    /**
+     * The Discount.
+     */
     @CsvBindByName
     protected int discount;
 
+    /**
+     * Instantiates a new Rule by count of goods.
+     */
     public RuleByCountOfGoods() {
     }
 
+    /**
+     * Instantiates a new Rule by count of goods.
+     *
+     * @param name                the name
+     * @param minimalCountOfGoods the minimal count of goods
+     * @param discount            the discount
+     */
     public RuleByCountOfGoods(String name, int minimalCountOfGoods, int discount) {
         this.name = name;
         this.minimalCountOfGoods = minimalCountOfGoods;
@@ -59,18 +78,38 @@ public class RuleByCountOfGoods extends Rule {
         return RuleValidateType.CHECK;
     }
 
+    /**
+     * Gets minimal count of goods.
+     *
+     * @return the minimal count of goods
+     */
     public int getMinimalCountOfGoods() {
         return minimalCountOfGoods;
     }
 
+    /**
+     * Sets minimal count of goods.
+     *
+     * @param minimalCountOfGoods the minimal count of goods
+     */
     public void setMinimalCountOfGoods(int minimalCountOfGoods) {
         this.minimalCountOfGoods = minimalCountOfGoods;
     }
 
+    /**
+     * Gets discount.
+     *
+     * @return the discount
+     */
     public int getDiscount() {
         return discount;
     }
 
+    /**
+     * Sets discount.
+     *
+     * @param discount the discount
+     */
     public void setDiscount(int discount) {
         this.discount = discount;
     }
