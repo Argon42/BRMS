@@ -149,20 +149,6 @@ public abstract class DataProviderTest {
     }
 
     @Test
-    public void createCheckWithCustomerId(){
-        UUID retailId = createRetail();
-
-        UUID customer = createCustomer(retailId);
-        UUID check1 = createStoreCheck(customer, 1000, 1);
-        UUID check2 = createStoreCheck(customer, 1000, 2);
-        UUID check3 = createStoreCheck(customer, 1000, 4);
-
-        Assertions.assertEquals(customer, dataProvider.findCheckByID(check1).get().getCustomerId());
-        Assertions.assertEquals(customer, dataProvider.findCheckByID(check2).get().getCustomerId());
-        Assertions.assertEquals(customer, dataProvider.findCheckByID(check3).get().getCustomerId());
-    }
-
-    @Test
     public void workWithCheck() {
         var check = new StoreCheck();
         check.setCost(1000);

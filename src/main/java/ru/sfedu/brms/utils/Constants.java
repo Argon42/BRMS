@@ -27,6 +27,7 @@ public class Constants {
     public static final String FIELD_RULE_NAME = "name";
     public static final String FIELD_RULE_DESCRIPTION = "description";
     public static final String FIELD_RULE_RETAIL_ID = "retailId";
+    public static final String FIELD_RULE_ENABLE = "enable";
 
     public static final String FIELD_RULE_BY_TIME_START = "startTime";
     public static final String FIELD_RULE_BY_TIME_END = "endTime";
@@ -55,9 +56,9 @@ public class Constants {
     public static final String FIELD_RETAIL_COUNT_OF_STORES = "countOfStores";
 
 
-    public static final String SQL_INSERT_RULE_BY_PURCHASE_COUNT = "INSERT INTO %s VALUES('%s', '%s', '%s', '%s', %.00f, %.00f);";
-    public static final String SQL_INSERT_RULE_BY_COUNT_OF_GOODS = "INSERT INTO %s VALUES('%s', '%s', '%s', '%s', %d, %d);";
-    public static final String SQL_INSERT_RULE_BY_TIME = "INSERT INTO %s VALUES('%s', '%s', '%s', '%s', '%s', '%s', %.00f);";
+    public static final String SQL_INSERT_RULE_BY_PURCHASE_COUNT = "INSERT INTO %s VALUES('%s', '%s', '%s', %b, '%s', %.00f, %.00f);";
+    public static final String SQL_INSERT_RULE_BY_COUNT_OF_GOODS = "INSERT INTO %s VALUES('%s', '%s', '%s', %b, '%s', %d, %d);";
+    public static final String SQL_INSERT_RULE_BY_TIME = "INSERT INTO %s VALUES('%s', '%s', '%s', %b, '%s', '%s', '%s', %.00f);";
     public static final String SQL_INSERT_STORE_CHECK = "INSERT INTO %s VALUES('%s', '%s', %.00f, %d, '%s');";
     public static final String SQL_INSERT_CUSTOMER = "INSERT INTO %s VALUES('%s', '%s', '%s', '%s', '%s');";
     public static final String SQL_INSERT_RETAIL = "INSERT INTO %s VALUES('%s', '%s', %d);";
@@ -65,12 +66,13 @@ public class Constants {
     public static final String SQL_SELECT_ALL_FROM = "SELECT * FROM %s;";
     public static final String SQL_SELECT_ALL_FROM_WHERE_ID = "SELECT * FROM %s WHERE id='%s';";
     public static final String SQL_SELECT_CHECKS_WITH_CUSTOMER_ID = "SELECT * FROM %s WHERE customerId='%s';";
+    public static final String SQL_SELECT_CUSTOMERS_WHERE_RETAIL_ID = "SELECT * FROM %s WHERE retailId='%s';";
 
     public static final String SQL_DELETE_WHERE_ID = "DELETE FROM %s WHERE id = '%s';";
 
-    public static final String SQL_UPDATE_RULE_BY_PURCHASE_COUNT = "UPDATE %s SET %s='%s', %s='%s', %s='%s', %s=%.00f, %s=%.000f WHERE id='%s';";
-    public static final String SQL_UPDATE_RULE_BY_COUNT_OF_GOODS = "UPDATE %s SET %s='%s', %s='%s', %s='%s', %s=%d, %s=%d WHERE id='%s';";
-    public static final String SQL_UPDATE_RULE_BY_TIME = "UPDATE %s SET %s='%s', %s='%s', %s='%s', %s='%s', %s='%s', %s=%.000f WHERE id='%s';";
+    public static final String SQL_UPDATE_RULE_BY_PURCHASE_COUNT = "UPDATE %s SET %s='%s', %s='%s', %s=%b, %s='%s', %s=%.00f, %s=%.000f WHERE id='%s';";
+    public static final String SQL_UPDATE_RULE_BY_COUNT_OF_GOODS = "UPDATE %s SET %s='%s', %s='%s', %s=%b, %s='%s', %s=%d, %s=%d WHERE id='%s';";
+    public static final String SQL_UPDATE_RULE_BY_TIME = "UPDATE %s SET %s='%s', %s='%s', %s=%b, %s='%s', %s='%s', %s='%s', %s=%.000f WHERE id='%s';";
     public static final String SQL_UPDATE_CHECK = "UPDATE %s SET %s='%s', %s=%.00f, %s=%d, %s='%s' WHERE id='%s';";
     public static final String SQL_UPDATE_CUSTOMER = "UPDATE %s SET %s='%s', %s='%s', %s='%s', %s='%s' WHERE id='%s';";
     public static final String SQL_UPDATE_RETAIL = "UPDATE %s SET %s='%s', %s=%d WHERE id='%s';";
@@ -104,6 +106,7 @@ public class Constants {
                     "%s VARCHAR(36) PRIMARY KEY, " +
                     "%s VARCHAR(255), " +
                     "%s VARCHAR(255), " +
+                    "%s BOOLEAN, " +
                     "%s VARCHAR(36), " +
                     "%s VARCHAR(255), " +
                     "%s VARCHAR(255), " +
@@ -114,6 +117,7 @@ public class Constants {
                     "%s VARCHAR(36) PRIMARY KEY, " +
                     "%s VARCHAR(255), " +
                     "%s VARCHAR(255), " +
+                    "%s BOOLEAN, " +
                     "%s VARCHAR(36), " +
                     "%s DOUBLE PRECISION, " +
                     "%s DOUBLE PRECISION" +
@@ -123,6 +127,7 @@ public class Constants {
                     "%s VARCHAR(36) PRIMARY KEY, " +
                     "%s VARCHAR(255), " +
                     "%s VARCHAR(255), " +
+                    "%s BOOLEAN, " +
                     "%s VARCHAR(36), " +
                     "%s INT, " +
                     "%s INT" +

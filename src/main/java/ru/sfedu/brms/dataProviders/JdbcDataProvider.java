@@ -230,7 +230,7 @@ public class JdbcDataProvider extends DataProvider {
     @Override
     protected List<Customer> findAllCustomersByRetail(UUID id) {
         List<Customer> customers = new ArrayList<>();
-        executeQuery(SqlUtil.selectChecksWithCustomerId(id), set -> {
+        executeQuery(SqlUtil.selectCustomersWithRetailId(id), set -> {
             try {
                 while (set != null && set.next()) {
                     Customer customer = SqlUtil.readCustomer(set);

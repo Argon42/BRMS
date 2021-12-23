@@ -2,9 +2,9 @@ package ru.sfedu.brms.utils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.sfedu.brms.models.StoreCheck;
 import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.Retail;
+import ru.sfedu.brms.models.StoreCheck;
 import ru.sfedu.brms.models.rules.RuleByCountOfGoods;
 import ru.sfedu.brms.models.rules.RuleByPurchaseCount;
 import ru.sfedu.brms.models.rules.RuleByTime;
@@ -53,6 +53,7 @@ public class SqlUtil {
                 Constants.FIELD_RULE_ID,
                 Constants.FIELD_RULE_NAME,
                 Constants.FIELD_RULE_DESCRIPTION,
+                Constants.FIELD_RULE_ENABLE,
                 Constants.FIELD_RULE_RETAIL_ID,
                 Constants.FIELD_RULE_BY_PURCHASE_COUNT_MINIMAL_COST,
                 Constants.FIELD_RULE_BY_PURCHASE_COUNT_DISCOUNT_PERCENT
@@ -65,6 +66,7 @@ public class SqlUtil {
                 Constants.FIELD_RULE_ID,
                 Constants.FIELD_RULE_NAME,
                 Constants.FIELD_RULE_DESCRIPTION,
+                Constants.FIELD_RULE_ENABLE,
                 Constants.FIELD_RULE_RETAIL_ID,
                 Constants.FIELD_RULE_BY_COUNT_OF_GOODS_MINIMAL_COUNT_OF_GOODS,
                 Constants.FIELD_RULE_BY_COUNT_OF_GOODS_DISCOUNT
@@ -77,6 +79,7 @@ public class SqlUtil {
                 Constants.FIELD_RULE_ID,
                 Constants.FIELD_RULE_NAME,
                 Constants.FIELD_RULE_DESCRIPTION,
+                Constants.FIELD_RULE_ENABLE,
                 Constants.FIELD_RULE_RETAIL_ID,
                 Constants.FIELD_RULE_BY_TIME_START,
                 Constants.FIELD_RULE_BY_TIME_END,
@@ -90,6 +93,7 @@ public class SqlUtil {
                 rule.getId(),
                 rule.getName(),
                 rule.getDescription(),
+                rule.isEnable(),
                 rule.getRetailId(),
                 rule.getMinimalCost(),
                 rule.getDiscountPercent()
@@ -102,6 +106,7 @@ public class SqlUtil {
                 rule.getId(),
                 rule.getName(),
                 rule.getDescription(),
+                rule.isEnable(),
                 rule.getRetailId(),
                 rule.getMinimalCountOfGoods(),
                 rule.getDiscount()
@@ -114,6 +119,7 @@ public class SqlUtil {
                 rule.getId(),
                 rule.getName(),
                 rule.getDescription(),
+                rule.isEnable(),
                 rule.getRetailId(),
                 rule.getStartTime(),
                 rule.getEndTime(),
@@ -193,6 +199,7 @@ public class SqlUtil {
                 rule.getRuleType().getRuleClass().getSimpleName(),
                 Constants.FIELD_RULE_NAME, rule.getName(),
                 Constants.FIELD_RULE_DESCRIPTION, rule.getDescription(),
+                Constants.FIELD_RULE_ENABLE, rule.isEnable(),
                 Constants.FIELD_RULE_RETAIL_ID, rule.getRetailId(),
                 Constants.FIELD_RULE_BY_PURCHASE_COUNT_MINIMAL_COST, rule.getMinimalCost(),
                 Constants.FIELD_RULE_BY_PURCHASE_COUNT_DISCOUNT_PERCENT, rule.getDiscountPercent(),
@@ -205,6 +212,7 @@ public class SqlUtil {
                 rule.getRuleType().getRuleClass().getSimpleName(),
                 Constants.FIELD_RULE_NAME, rule.getName(),
                 Constants.FIELD_RULE_DESCRIPTION, rule.getDescription(),
+                Constants.FIELD_RULE_ENABLE, rule.isEnable(),
                 Constants.FIELD_RULE_RETAIL_ID, rule.getRetailId(),
                 Constants.FIELD_RULE_BY_COUNT_OF_GOODS_MINIMAL_COUNT_OF_GOODS, rule.getMinimalCountOfGoods(),
                 Constants.FIELD_RULE_BY_COUNT_OF_GOODS_DISCOUNT, rule.getDiscount(),
@@ -217,6 +225,7 @@ public class SqlUtil {
                 rule.getRuleType().getRuleClass().getSimpleName(),
                 Constants.FIELD_RULE_NAME, rule.getName(),
                 Constants.FIELD_RULE_DESCRIPTION, rule.getDescription(),
+                Constants.FIELD_RULE_ENABLE, rule.isEnable(),
                 Constants.FIELD_RULE_RETAIL_ID, rule.getRetailId(),
                 Constants.FIELD_RULE_BY_TIME_START, rule.getStartTime(),
                 Constants.FIELD_RULE_BY_TIME_END, rule.getEndTime(),
@@ -292,12 +301,17 @@ public class SqlUtil {
         );
     }
 
+    public static String selectCustomersWithRetailId(UUID id) {
+        return String.format(Constants.SQL_SELECT_CUSTOMERS_WHERE_RETAIL_ID, Customer.class.getSimpleName(), id);
+    }
+
     public static RuleByTime readRuleByTime(ResultSet set) {
         var rule = new RuleByTime();
         try {
             rule.setId(UUID.fromString(set.getString(Constants.FIELD_RULE_ID)));
             rule.setName(set.getString(Constants.FIELD_RULE_NAME));
             rule.setDescription(set.getString(Constants.FIELD_RULE_DESCRIPTION));
+            rule.setEnable(set.getBoolean(Constants.FIELD_RULE_ENABLE));
             rule.setRetailId(UUID.fromString(set.getString(Constants.FIELD_RULE_RETAIL_ID)));
             rule.setStartTime(Instant.parse(set.getString(Constants.FIELD_RULE_BY_TIME_START)));
             rule.setEndTime(Instant.parse(set.getString(Constants.FIELD_RULE_BY_TIME_END)));
@@ -314,6 +328,7 @@ public class SqlUtil {
             rule.setId(UUID.fromString(set.getString(Constants.FIELD_RULE_ID)));
             rule.setName(set.getString(Constants.FIELD_RULE_NAME));
             rule.setDescription(set.getString(Constants.FIELD_RULE_DESCRIPTION));
+            rule.setEnable(set.getBoolean(Constants.FIELD_RULE_ENABLE));
             rule.setRetailId(UUID.fromString(set.getString(Constants.FIELD_RULE_RETAIL_ID)));
             rule.setMinimalCost(set.getFloat(Constants.FIELD_RULE_BY_PURCHASE_COUNT_MINIMAL_COST));
             rule.setDiscountPercent(set.getFloat(Constants.FIELD_RULE_BY_PURCHASE_COUNT_DISCOUNT_PERCENT));
@@ -329,6 +344,7 @@ public class SqlUtil {
             rule.setId(UUID.fromString(set.getString(Constants.FIELD_RULE_ID)));
             rule.setName(set.getString(Constants.FIELD_RULE_NAME));
             rule.setDescription(set.getString(Constants.FIELD_RULE_DESCRIPTION));
+            rule.setEnable(set.getBoolean(Constants.FIELD_RULE_ENABLE));
             rule.setRetailId(UUID.fromString(set.getString(Constants.FIELD_RULE_RETAIL_ID)));
             rule.setMinimalCountOfGoods(set.getInt(Constants.FIELD_RULE_BY_COUNT_OF_GOODS_MINIMAL_COUNT_OF_GOODS));
             rule.setDiscount(set.getInt(Constants.FIELD_RULE_BY_COUNT_OF_GOODS_DISCOUNT));
