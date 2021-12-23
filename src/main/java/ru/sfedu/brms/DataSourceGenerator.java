@@ -135,6 +135,7 @@ public class DataSourceGenerator {
                 break;
         }
         rule.setName(ruleNames[rnd.nextInt(retailNames.length)]);
+        rule.setEnable(rnd.nextFloat() > 0.5f);
         return rule;
     }
 }

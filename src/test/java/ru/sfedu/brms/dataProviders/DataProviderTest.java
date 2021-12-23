@@ -7,9 +7,13 @@ import org.junit.jupiter.api.Test;
 import ru.sfedu.brms.models.Customer;
 import ru.sfedu.brms.models.Retail;
 import ru.sfedu.brms.models.StoreCheck;
+import ru.sfedu.brms.models.enums.DisplayVariants;
+import ru.sfedu.brms.models.rules.Rule;
 import ru.sfedu.brms.models.rules.RuleByCountOfGoods;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,44 +21,110 @@ public abstract class DataProviderTest {
     private static IDataProvider dataProvider;
 
     @BeforeEach
-    public void Setup() {
+    public void setup() {
         dataProvider = loadDataProvider();
+        dataProvider.dropAll();
         dataProvider.initDataSource();
     }
 
     @Test
+    public void searchAllRules() {
+        UUID retailId = createRetail();
+        UUID ruleId1 = createRuleByCountOfGoods(retailId, 3);
+        UUID ruleId2 = createRuleByCountOfGoods(retailId, 3);
+        List<Rule> rules = dataProvider.searchAllRules();
+        Assertions.assertEquals(2, rules.size());
+        Optional<Rule> rule1 = dataProvider.findRuleByID(ruleId1);
+        Optional<Rule> rule2 = dataProvider.findRuleByID(ruleId2);
+        Assertions.assertTrue(rule1.isPresent() && rule2.isPresent());
+        Assertions.assertTrue(rules.contains(rule1.get()));
+        Assertions.assertTrue(rules.contains(rule2.get()));
+    }
+
+    @Test
+    public void searchAllRulesNotNull() {
+        UUID retailId = createRetail();
+        createRuleByCountOfGoods(retailId, 3);
+        createRuleByCountOfGoods(retailId, 3);
+        List<Rule> rules = dataProvider.searchAllRules();
+        Assertions.assertNotNull(rules);
+    }
+
+    @Test
+    public void searchAllRulesWhenRulesNotExists() {
+        List<Rule> rules = dataProvider.searchAllRules();
+        Assertions.assertEquals(0, rules.size());
+    }
+
+    @Test
+    public void searchAvailableRules() {
+        UUID retailId = createRetail();
+        UUID ruleId1 = createRuleByCountOfGoods(retailId, 2);
+        UUID ruleId2 = createRuleByCountOfGoods(retailId, 3);
+        UUID customer = createCustomer(retailId);
+        UUID check1 = createStoreCheck(customer, 1000, 1);
+        UUID check2 = createStoreCheck(customer, 1000, 2);
+        UUID check3 = createStoreCheck(customer, 1000, 4);
+
+        Assertions.assertEquals(0, dataProvider.searchAvailableRules(check1).size());
+        Assertions.assertEquals(1, dataProvider.searchAvailableRules(check2).size());
+        Assertions.assertEquals(2, dataProvider.searchAvailableRules(check3).size());
+    }
+
+    @Test
+    public void searchAvailableRulesWithIncorrectCheckId() {
+        UUID retailId = createRetail();
+        UUID ruleId1 = createRuleByCountOfGoods(retailId, 2);
+        UUID ruleId2 = createRuleByCountOfGoods(retailId, 3);
+        UUID customer = createCustomer(retailId);
+        UUID check1 = createStoreCheck(customer, 1000, 1);
+
+        Assertions.assertThrows(NoSuchElementException.class, () -> dataProvider.searchAvailableRules(UUID.randomUUID()));
+    }
+
+    @Test
+    public void searchAvailableRulesWithNullCheck() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> dataProvider.searchAvailableRules(null));
+    }
+
+    @Test
+    public void displayStatisticForEnabledAndCustomer() {
+        UUID retailId = createRetail();
+        UUID ruleId1 = createRuleByCountOfGoods(retailId, 2);
+        UUID ruleId2 = createRuleByCountOfGoods(retailId, 3);
+        dataProvider.disableRule(createRuleByCountOfGoods(retailId, 4));
+
+        String result = dataProvider.displayStatistic(String.format("%s_%s", DisplayVariants.ENABLED_RULES, DisplayVariants.RULE_FOR_CUSTOMERS));
+        StringBuilder builder = new StringBuilder()
+                .append(dataProvider.findRuleByID(ruleId1).get())
+                .append('\n')
+                .append(dataProvider.findRuleByID(ruleId2).get())
+                .append('\n');
+        Assertions.assertEquals(builder.toString(), result);
+    }
+
+    @Test
+    public void displayStatisticWithNullArgument(){
+       Assertions.assertThrows(IllegalArgumentException.class, () -> dataProvider.displayStatistic(null));
+    }
+
+    @Test
     public void createRuleByCountOfGoods() {
-        var retail = new Retail();
-        retail.setName("TestRetail");
-        retail.setCountOfStores(4);
-        var retailId = dataProvider.saveRetail(retail);
+        UUID retailId = createRetail();
         Assertions.assertTrue(dataProvider.findRetailByID(retailId).isPresent());
 
-        var rule = new RuleByCountOfGoods();
-        rule.setName("TestRule");
-        rule.setDiscount(10);
-        rule.setMinimalCountOfGoods(3);
-        rule.setRetailId(retailId);
-        var ruleId = dataProvider.saveRule(rule);
+        UUID ruleId = createRuleByCountOfGoods(retailId, 3);
         Assertions.assertTrue(dataProvider.findRuleByID(ruleId).isPresent());
 
-        var customer = new Customer(null, "TestCustomer", "88005553535", "qq@qq.qq");
-        customer.setRetailId(retailId);
-        var customerId = dataProvider.saveCustomer(customer);
+        UUID customerId = createCustomer(retailId);
         Assertions.assertTrue(dataProvider.findCustomerByID(customerId).isPresent());
 
-        var check = new StoreCheck();
-        check.setCost(1000);
-        check.setCountOfGoods(3);
-        check.setTime(Instant.now());
-        check.setCustomerId(customerId);
-        var checkId = dataProvider.saveCheck(check);
+        UUID checkId = createStoreCheck(customerId, 1000, 3);
         Assertions.assertTrue(dataProvider.findCheckByID(checkId).isPresent());
 
         var fullRule = dataProvider.findRuleByID(ruleId);
         Assertions.assertTrue(fullRule.isPresent());
         getLog().info(fullRule);
-
 
         dataProvider.deleteCheck(checkId);
         dataProvider.deleteCustomer(customerId);
@@ -76,6 +146,20 @@ public abstract class DataProviderTest {
         Assertions.assertEquals(foundedCustomer.get(), dataProvider.findCustomerByID(foundedCustomer.get().getId()).get());
 
         dataProvider.deleteCustomer(foundedCustomer.get().getId());
+    }
+
+    @Test
+    public void createCheckWithCustomerId(){
+        UUID retailId = createRetail();
+
+        UUID customer = createCustomer(retailId);
+        UUID check1 = createStoreCheck(customer, 1000, 1);
+        UUID check2 = createStoreCheck(customer, 1000, 2);
+        UUID check3 = createStoreCheck(customer, 1000, 4);
+
+        Assertions.assertEquals(customer, dataProvider.findCheckByID(check1).get().getCustomerId());
+        Assertions.assertEquals(customer, dataProvider.findCheckByID(check2).get().getCustomerId());
+        Assertions.assertEquals(customer, dataProvider.findCheckByID(check3).get().getCustomerId());
     }
 
     @Test
@@ -117,6 +201,38 @@ public abstract class DataProviderTest {
     }
 
     protected abstract IDataProvider loadDataProvider();
+
+    private UUID createStoreCheck(UUID customerId, int cost, int countOfGoods) {
+        var check = new StoreCheck();
+        check.setCost(cost);
+        check.setCountOfGoods(countOfGoods);
+        check.setTime(Instant.now());
+        check.setCustomerId(customerId);
+        return dataProvider.saveCheck(check);
+    }
+
+    private UUID createCustomer(UUID retailId) {
+        var customer = new Customer(null, "TestCustomer", "88005553535", "qq@qq.qq");
+        customer.setRetailId(retailId);
+        return dataProvider.saveCustomer(customer);
+    }
+
+    private UUID createRuleByCountOfGoods(UUID retailId, int minimalCountOfGoods) {
+        var rule = new RuleByCountOfGoods();
+        rule.setName("TestRule");
+        rule.setDiscount(10);
+        rule.setMinimalCountOfGoods(minimalCountOfGoods);
+        rule.setRetailId(retailId);
+        rule.setEnable(true);
+        return dataProvider.saveRule(rule);
+    }
+
+    private UUID createRetail() {
+        var retail = new Retail();
+        retail.setName("TestRetail");
+        retail.setCountOfStores(4);
+        return dataProvider.saveRetail(retail);
+    }
 
     protected abstract Logger getLog();
 }

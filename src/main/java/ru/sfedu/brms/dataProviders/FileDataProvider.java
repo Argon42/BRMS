@@ -31,6 +31,7 @@ public abstract class FileDataProvider extends DataProvider {
         RuleTypes.loadAllClassesRules().forEach(this::createFolder);
         createFolder(Customer.class);
         createFolder(StoreCheck.class);
+        createFolder(Retail.class);
     }
 
     @Override
@@ -76,6 +77,7 @@ public abstract class FileDataProvider extends DataProvider {
                 .stream()
                 .map(this::fileToBean)
                 .flatMap(Collection::stream)
+                .peek(rule -> findRetailByID(rule.getRetailId()).ifPresent(rule::setRetail))
                 .collect(Collectors.toList());
     }
 

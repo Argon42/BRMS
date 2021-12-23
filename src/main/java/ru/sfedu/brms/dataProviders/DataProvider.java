@@ -318,11 +318,13 @@ public abstract class DataProvider implements IDataProvider {
 
     @Override
     public List<Rule> searchAvailableRules(UUID checkId) {
+        if (checkId == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
         return searchAvailableRules(findCheckByID(checkId).get());
     }
 
     @Override
     public List<Rule> searchAvailableRules(UUID checkId, UUID customerId) {
+        if (checkId == null || customerId == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
         List<Rule> rules = new ArrayList<>();
         var check = findCheckByID(checkId);
         var customer = findCustomerByID(customerId);
@@ -330,7 +332,7 @@ public abstract class DataProvider implements IDataProvider {
             rules.addAll(searchAvailableRules(check.get()));
             customer.ifPresent(value -> rules.addAll(searchAvailableRules(check.get(), value)));
         }
-        return rules;
+        return rules.stream().distinct().collect(Collectors.toList());
     }
 
     @Override
@@ -363,6 +365,8 @@ public abstract class DataProvider implements IDataProvider {
 
     @Override
     public String displayStatistic(String searchCriteria) {
+        if (searchCriteria == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+
         List<Rule> rules = new ArrayList<>();
         List<Rule> allRules = searchAllRules();
         if (searchCriteria.contains(DisplayVariants.RULE_FOR_CHECKS.toString()))
@@ -378,42 +382,8 @@ public abstract class DataProvider implements IDataProvider {
             rules.addAll(findRuleForChecksAndCustomers(allRules));
 
         StringBuilder builder = new StringBuilder();
-        rules.forEach(rule -> builder.append(rules).append('\n'));
+        rules.stream().distinct().forEach(rule -> builder.append(rule).append('\n'));
         return builder.toString();
-    }
-
-    private List<Rule> searchAvailableRules(StoreCheck storeCheck, Customer customer) {
-        return searchAllRules().stream().filter(rule -> {
-            if(rule.getRetail().getId() != customer.getRetailId() || !customer.getChecks().contains(storeCheck))
-                return false;
-            switch (rule.getRuleType()) {
-                case RULE_BY_PURCHASE_COUNT:
-                    return customer.getChecks().stream().mapToDouble(storeCheck1 -> storeCheck.getCost()).sum() > ((RuleByPurchaseCount) rule).getMinimalCost();
-                case RULE_BY_COUNT_OF_GOODS:
-                    return storeCheck.getCountOfGoods() > ((RuleByCountOfGoods) rule).getMinimalCountOfGoods();
-                case RULE_BY_TIME:
-                    var ruleByTime = (RuleByTime) rule;
-                    return ruleByTime.getStartTime().isBefore(storeCheck.getTime()) && ruleByTime.getEndTime().isAfter(storeCheck.getTime());
-            }
-            return false;
-        }).collect(Collectors.toList());
-    }
-
-    private List<Rule> searchAvailableRules(StoreCheck storeCheck) {
-        return searchAllRules().stream().filter(rule -> {
-            if(!rule.getRetail().getChecks().contains(storeCheck))
-                return false;
-            switch (rule.getRuleType()) {
-                case RULE_BY_PURCHASE_COUNT:
-                    return false;
-                case RULE_BY_COUNT_OF_GOODS:
-                    return storeCheck.getCountOfGoods() > ((RuleByCountOfGoods) rule).getMinimalCountOfGoods();
-                case RULE_BY_TIME:
-                    var ruleByTime = (RuleByTime) rule;
-                    return ruleByTime.getStartTime().isBefore(storeCheck.getTime()) && ruleByTime.getEndTime().isAfter(storeCheck.getTime());
-            }
-            return false;
-        }).collect(Collectors.toList());
     }
 
     /**
@@ -549,6 +519,41 @@ public abstract class DataProvider implements IDataProvider {
                 stackTrace.getMethodName(),
                 Constants.DEFAULT_AUTHOR,
                 result);
+    }
+
+    private List<Rule> searchAvailableRules(StoreCheck storeCheck, Customer customer) {
+        return searchAllRules().stream().filter(rule -> {
+            if(rule.getRetail().getId() != customer.getRetailId() || !customer.getChecks().contains(storeCheck))
+                return false;
+            switch (rule.getRuleType()) {
+                case RULE_BY_PURCHASE_COUNT:
+                    return customer.getChecks().stream().mapToDouble(storeCheck1 -> storeCheck.getCost()).sum() >= ((RuleByPurchaseCount) rule).getMinimalCost();
+                case RULE_BY_COUNT_OF_GOODS:
+                    return storeCheck.getCountOfGoods() >= ((RuleByCountOfGoods) rule).getMinimalCountOfGoods();
+                case RULE_BY_TIME:
+                    var ruleByTime = (RuleByTime) rule;
+                    return ruleByTime.getStartTime().isBefore(storeCheck.getTime()) && ruleByTime.getEndTime().isAfter(storeCheck.getTime());
+            }
+            return false;
+        }).collect(Collectors.toList());
+    }
+
+    private List<Rule> searchAvailableRules(StoreCheck storeCheck) {
+        if (storeCheck == null) throw new IllegalArgumentException(Constants.ARGUMENT_IS_NULL);
+        return searchAllRules().stream().filter(rule -> {
+            if(!rule.getRetail().getChecks().contains(storeCheck))
+                return false;
+            switch (rule.getRuleType()) {
+                case RULE_BY_PURCHASE_COUNT:
+                    return false;
+                case RULE_BY_COUNT_OF_GOODS:
+                    return storeCheck.getCountOfGoods() >= ((RuleByCountOfGoods) rule).getMinimalCountOfGoods();
+                case RULE_BY_TIME:
+                    var ruleByTime = (RuleByTime) rule;
+                    return ruleByTime.getStartTime().isBefore(storeCheck.getTime()) && ruleByTime.getEndTime().isAfter(storeCheck.getTime());
+            }
+            return false;
+        }).collect(Collectors.toList());
     }
 
     private boolean isIncorrectNewRetail(Retail retail) {
