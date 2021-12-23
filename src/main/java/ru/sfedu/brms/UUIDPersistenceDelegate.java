@@ -4,7 +4,9 @@ import java.beans.Encoder;
 import java.beans.Expression;
 import java.beans.PersistenceDelegate;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 public class UUIDPersistenceDelegate extends PersistenceDelegate {
@@ -17,7 +19,7 @@ public class UUIDPersistenceDelegate extends PersistenceDelegate {
     }
 
     protected boolean mutatesTo(Object oldInstance, Object newInstance) {
-        return hashesWritten.contains(oldInstance);
+        return hashesWritten.contains(newInstance);
     }
 }
 
